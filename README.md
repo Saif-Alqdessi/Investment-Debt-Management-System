@@ -258,14 +258,6 @@ Session cookie set → redirect to /dashboard
 Sign-out: supabase.auth.signOut() → redirect to /login
 ```
 
----
-
-## 📬 Contact
-
-| | |
-|---|---|
-| **GitHub** | [github.com/your-username](https://github.com/your-username) |
-| **LinkedIn** | [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile) |
 
 ---
 
