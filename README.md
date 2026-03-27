@@ -1,4 +1,4 @@
-# 🏦 Rareb — Investment & Debt Management System
+# 🏦 Investment & Debt Management System
 
 > **Take full control of your financial portfolio.** Rareb is a private, secure, full-stack platform for tracking investments, managing debts, calculating returns, and maintaining a complete audit trail — with first-class Arabic (RTL) and English support.
 
