@@ -1,0 +1,48 @@
+{
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "investments": "الاستثمارات",
+    "debts": "الديون",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "sign_out": "تسجيل الخروج"
+  },
+  "dashboard": {
+    "welcome": "أهلاً بك مجدداً! إليك نظرة عامة على محفظتك.",
+    "total_portfolio": "إجمالي قيمة المحفظة",
+    "pending_profits": "إجمالي الأرباح المعلقة",
+    "total_commissions": "إجمالي العمولات",
+    "maturing_soon": "تستحق قريباً (خلال 30 يوماً)",
+    "recent_activity": "النشاط الأخير",
+    "days_remaining": "يوم متبقي",
+    "view_details": "عرض التفاصيل"
+  },
+  "forms": {
+    "new_investment": "استثمار جديد",
+    "investor_name": "اسم المستثمر",
+    "principal_amount": "رأس المال",
+    "starting_date": "تاريخ البدء",
+    "due_date": "تاريخ الاستحقاق",
+    "duration": "المدة",
+    "category": "الفئة",
+    "profit_rate": "نسبة الربح (%)",
+    "commission_rate": "نسبة العمولة (%)",
+    "notes": "ملاحظات",
+    "create": "إنشاء",
+    "save_draft": "حفظ كمسودة",
+    "auto_calculations": "الحسابات التلقائية",
+    "profit_amount": "مبلغ الربح",
+    "total_payout": "إجمالي الدفعة"
+  },
+  "debts": {
+    "total_due": "إجمالي المستحق",
+    "total_paid": "إجمالي المدفوع",
+    "total_remaining": "إجمالي المتبقي",
+    "status": {
+      "pending": "معلق",
+      "partial": "مدفوع جزئياً",
+      "paid": "تم السداد",
+      "defaulted": "متعثر"
+    }
+  }
+}

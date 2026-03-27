@@ -1,0 +1,84 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        NOTIFICATION ENGINE FLOW                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                    ┌──────────────────────────┐
+                    │   INVESTMENT CREATED     │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  DATABASE TRIGGER FIRES  │
+                    │  generate_investment_    │
+                    │  notifications()         │
+                    └────────────┬─────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │                         │
+                    ▼                         ▼
+        ┌───────────────────┐    ┌───────────────────┐
+        │ INSERT: 30-day    │    │ INSERT: 7-day     │
+        │ reminder          │    │ reminder          │
+        │ scheduled_date =  │    │ scheduled_date =  │
+        │ due_date - 30     │    │ due_date - 7      │
+        └───────────────────┘    └───────────────────┘
+                    │                         │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │ INSERT: Day-of reminder  │
+                    │ scheduled_date = due_date│
+                    └──────────────────────────┘
+                                 │
+                                 │
+═══════════════════════════════════════════════════════════════════════════════
+                                 │
+                    DAILY CRON JOB (Supabase Edge Function)
+                    Runs at 08:00 UTC every day
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  EDGE FUNCTION:          │
+                    │  check-maturity-dates    │
+                    └────────────┬─────────────┘
+                                 │
+                                 ▼
+                    ┌──────────────────────────┐
+                    │  QUERY:                  │
+                    │  SELECT * FROM           │
+                    │  notifications           │
+                    │  WHERE scheduled_date    │
+                    │    <= CURRENT_DATE       │
+                    │  AND is_sent = FALSE     │
+                    │  AND retry_count < 3     │
+                    └────────────┬─────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │                         │
+             No Results?              Results Found
+                    │                         │
+                    ▼                         ▼
+              ┌─────────┐        ┌─────────────────────┐
+              │  EXIT   │        │  FOR EACH NOTIF:    │
+              └─────────┘        └──────────┬──────────┘
+                                            │
+                                            ▼
+                                 ┌──────────────────────┐
+                                 │  CALL RESEND API     │
+                                 │  Send email with:    │
+                                 │  - recipient_email   │
+                                 │  - subject           │
+                                 │  - body (HTML)       │
+                                 └──────────┬───────────┘
+                                            │
+                          ┌─────────────────┴─────────────────┐
+                          │                                   │
+                    SUCCESS                              FAILURE
+                          │                                   │
+                          ▼                                   ▼
+               ┌──────────────────┐              ┌──────────────────────┐
+               │ UPDATE notif:    │              │ UPDATE notif:        │
+               │ is_sent = TRUE   │              │ retry_count += 1     │
+               │ sent_at = NOW()  │              │ error_message = err  │
+               └──────────────────┘              └──────────────────────┘
