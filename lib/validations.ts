@@ -12,9 +12,11 @@ export const investmentSchema = z.object({
   commission_rate: z.number().min(0).max(100, 'Commission rate must be between 0 and 100'),
   notes: z.string().optional(),
   is_shared: z.boolean().default(false),
+  auto_renew: z.boolean().default(false),
+  is_profit_delivered: z.boolean().default(false),
   shared_investors: z.array(z.object({
     investor_name: z.string().min(1, 'Investor name is required'),
-    share_percentage: z.number().min(0.01).max(100),
+    amount_paid: z.number().min(0.01, 'Amount paid must be greater than 0'),
     custom_commission_rate: z.number().min(0).max(100).optional(),
   })).optional(),
 }).refine((data) => {
@@ -26,13 +28,13 @@ export const investmentSchema = z.object({
   message: 'Due date must be after starting date',
   path: ['due_date']
 }).refine((data) => {
-  if (data.is_shared && data.shared_investors) {
-    const totalPercentage = data.shared_investors.reduce((sum, investor) => sum + investor.share_percentage, 0)
-    return totalPercentage <= 100
+  if (data.is_shared && data.shared_investors && data.principal_amount > 0) {
+    const totalAllocated = data.shared_investors.reduce((sum, si) => sum + (si.amount_paid || 0), 0)
+    return totalAllocated <= data.principal_amount
   }
   return true
 }, {
-  message: 'Total share percentage cannot exceed 100%',
+  message: 'Total allocated amount cannot exceed the principal amount',
   path: ['shared_investors']
 })
 

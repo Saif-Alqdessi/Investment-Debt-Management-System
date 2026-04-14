@@ -33,6 +33,7 @@ export async function createDebt(formData: DebtFormData) {
         ? validated.principal_amount * (1 + validated.interest_rate / 100)
         : validated.principal_amount,
       notes: validated.notes || null,
+      user_id: user.id,       // strict multi-tenancy
       created_by: user.id,
     }
 
@@ -89,6 +90,7 @@ export async function updateDebt(id: string, formData: DebtFormData) {
       .from('debts')
       .update(debtData)
       .eq('id', id)
+      .eq('user_id', user.id)   // prevent cross-tenant writes
       .select()
       .single()
 
@@ -121,6 +123,7 @@ export async function deleteDebt(id: string) {
       .from('debts')
       .delete()
       .eq('id', id)
+      .eq('user_id', user.id)   // prevent cross-tenant deletes
 
     if (error) {
       throw new Error(`Failed to delete debt: ${error.message}`)
@@ -217,12 +220,16 @@ export async function getDebts() {
   const supabase = createClient()
 
   try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) return { success: false, error: 'Unauthorized', data: null }
+
     const { data: debts, error } = await supabase
       .from('debts')
       .select(`
         *,
         payments:debt_payments(*)
       `)
+      .eq('user_id', user.id)   // explicit tenant filter (belt-and-suspenders)
       .order('created_at', { ascending: false })
 
     if (error) {

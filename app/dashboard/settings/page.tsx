@@ -1,307 +1,274 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState, useEffect } from 'react'
 import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import {
-  User,
-  Globe,
-  DollarSign,
-  Bell,
-  Shield,
-  Save,
-  Check,
-  Languages,
+  User, Settings2, Save, Check, Languages, DollarSign,
+  CheckCircle2, XCircle, Loader2,
 } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n/context'
+import { SecurityForm } from '@/components/settings/security-form'
+import { NotificationTestPanel } from '@/components/settings/notification-test-panel'
+import { getProfile, saveProfile, type ProfileData } from '@/app/dashboard/settings/actions'
+
+// ── Minimal inline status toast ───────────────────────────────────────────────
+type ToastState = { type: 'success' | 'error'; msg: string } | null
+function Toast({ status }: { status: ToastState }) {
+  if (!status) return null
+  return (
+    <div className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold mt-3 ${
+      status.type === 'success'
+        ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+        : 'bg-red-50 border border-red-200 text-red-700'
+    }`}>
+      {status.type === 'success'
+        ? <CheckCircle2 className="h-4 w-4 shrink-0" />
+        : <XCircle className="h-4 w-4 shrink-0" />}
+      {status.msg}
+    </div>
+  )
+}
 
 export default function SettingsPage() {
   const { locale, setLocale } = useLanguage()
 
-  // Profile state
-  const [displayName, setDisplayName] = useState('')
-  const [email, setEmail] = useState('')
-  const [profileSaved, setProfileSaved] = useState(false)
+  // Profile fields — all controlled
+  const [displayName, setDisplayName]               = useState('')
+  const [phone, setPhone]                           = useState('')
+  const [currency, setCurrency]                     = useState('USD')
+  const [notifEmail, setNotifEmail]                 = useState(true)
+  const [notifBrowser, setNotifBrowser]             = useState(false)
 
-  // Preferences state
-  const [currency, setCurrency] = useState('SAR')
-  const [dateFormat, setDateFormat] = useState('dd/mm/yyyy')
-  const [prefSaved, setPrefSaved] = useState(false)
+  // UI state
+  const [loading, setLoading]                       = useState(true)
+  const [saving, setSaving]                         = useState(false)
+  const [prefSaved, setPrefSaved]                   = useState(false)
+  const [toast, setToast]                           = useState<ToastState>(null)
 
-  // Notification preferences
-  const [notifMaturity, setNotifMaturity] = useState(true)
-  const [notifOverdue, setNotifOverdue] = useState(true)
-  const [notifNewInvestment, setNotifNewInvestment] = useState(false)
+  // ── Load profile from Supabase on mount ──────────────────────────────────
+  useEffect(() => {
+    getProfile().then((result) => {
+      if (result.success && result.data) {
+        const d = result.data as ProfileData
+        setDisplayName(d.full_name ?? '')
+        setPhone(d.phone ?? '')
+        setCurrency(d.preferred_currency ?? 'SAR')
+        setNotifEmail(d.email_notifications ?? true)
+        setNotifBrowser(d.browser_notifications ?? false)
+      }
+      setLoading(false)
+    })
+  }, [])
 
-  const handleSaveProfile = () => {
-    // Ready for data binding — persist to Supabase profiles table
-    setProfileSaved(true)
-    setTimeout(() => setProfileSaved(false), 2500)
+  // ── Save profile to Supabase ──────────────────────────────────────────────
+  const handleSave = async () => {
+    setSaving(true)
+    setToast(null)
+    const result = await saveProfile({
+      full_name:            displayName,
+      phone,
+      preferred_currency:   currency,
+      email_notifications:  notifEmail,
+      browser_notifications: notifBrowser,
+    })
+    setSaving(false)
+    if (result.success) {
+      setPrefSaved(true)
+      setToast({ type: 'success', msg: 'تم حفظ الإعدادات بنجاح ✓' })
+      setTimeout(() => { setPrefSaved(false); setToast(null) }, 3000)
+    } else {
+      setToast({ type: 'error', msg: result.error ?? 'فشل الحفظ، يرجى المحاولة مرة أخرى.' })
+    }
   }
 
-  const handleSavePreferences = () => {
-    // Ready for data binding — persist user preferences
-    setPrefSaved(true)
-    setTimeout(() => setPrefSaved(false), 2500)
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      {/* Page header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">الإعدادات</h1>
-        <p className="text-gray-500 mt-1">إدارة حسابك وتفضيلات التطبيق</p>
+    <div className="space-y-8">
+      {/* ── Page Header ─────────────────────────────────────────── */}
+      <header>
+        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">الإعدادات</h1>
+        <p className="text-slate-500 text-base mt-1">إدارة حسابك، الأمان، وتفضيلات المنصة</p>
+      </header>
+
+      {/* ── Main 12-col grid ─────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        {/* ── Left col (8): Profile + Security ───────────────────── */}
+        <div className="lg:col-span-8 space-y-8">
+
+          {/* Account Profile Section */}
+          <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-bold flex items-center gap-2 text-slate-900">
+                <User className="h-5 w-5 text-blue-600" />
+                الملف الشخصي
+              </h3>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              {/* Avatar */}
+              <div className="relative group shrink-0">
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-2 border-slate-200 overflow-hidden">
+                  <User className="h-10 w-10 text-white" />
+                </div>
+              </div>
+
+              {/* Fields */}
+              <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold text-slate-700">الاسم الكامل</label>
+                  <input
+                    className="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
+                    type="text"
+                    placeholder="أدخل اسمك الكامل"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-sm font-semibold text-slate-700">رقم الهاتف</label>
+                  <div className="relative">
+                    <input
+                      className="tabular-nums w-full bg-slate-50 border-0 rounded-xl ps-12 pe-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
+                      dir="ltr"
+                      type="text"
+                      placeholder="+966 50 000 0000"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                    <span className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400">📞</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Security & Privacy — extracted interactive Client Component */}
+          <SecurityForm />
+
+          {/* Notification Testing — interactive client component */}
+          <NotificationTestPanel />
+        </div>
+
+        {/* ── Right col (4): Preferences ───────────────────────────── */}
+        <div className="lg:col-span-4 space-y-8">
+
+          {/* Platform Preferences */}
+          <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900">
+              <Settings2 className="h-5 w-5 text-blue-600" />
+              تفضيلات المنصة
+            </h3>
+            <div className="space-y-6">
+              {/* Language */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <Languages className="h-4 w-4 text-slate-400" />
+                  اللغة
+                </label>
+                <Select value={locale} onValueChange={(v) => setLocale(v as 'en' | 'ar')}>
+                  <SelectTrigger className="w-full bg-slate-50 border-0 rounded-xl h-11">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ar">العربية 🇸🇦</SelectItem>
+                    <SelectItem value="en">English 🇬🇧</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Currency */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-slate-400" />
+                  العملة الأساسية
+                </label>
+                <div className="flex gap-2">
+                  {(['SAR', 'USD', 'TRY'] as const).map((code) => (
+                    <button
+                      key={code}
+                      onClick={() => setCurrency(code)}
+                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold tabular-nums transition-all ${
+                        currency === code
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {currency === 'SAR' && '＊ العملة الافتراضية: الريال السعودي ر.س'}
+                  {currency === 'USD' && '＊ الدولار الأمريكي $'}
+                  {currency === 'TRY' && '＊ الليرة التركية ₺'}
+                </p>
+              </div>
+
+              {/* Notifications */}
+              <div className="pt-4 border-t border-slate-100 space-y-3">
+                <p className="text-sm font-bold text-slate-900">التنبيهات</p>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="notif-email" className="text-sm font-medium text-slate-700 cursor-pointer">
+                    البريد الإلكتروني
+                  </label>
+                  <Switch
+                    id="notif-email"
+                    checked={notifEmail}
+                    onCheckedChange={setNotifEmail}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="notif-browser" className="text-sm font-medium text-slate-700 cursor-pointer">
+                    تنبيهات المتصفح
+                  </label>
+                  <Switch
+                    id="notif-browser"
+                    checked={notifBrowser}
+                    onCheckedChange={setNotifBrowser}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
 
-      {/* ── Section 1: Profile Information ── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
-            معلومات الملف الشخصي
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          {/* Avatar row */}
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-              <User className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">صورة الملف الشخصي</p>
-              <p className="text-xs text-gray-500 mt-0.5">سيتم دعم رفع الصور في التحديث القادم</p>
-              <Badge variant="outline" className="mt-1 text-xs text-gray-400 border-gray-200">
-                قريباً
-              </Badge>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="display-name">الاسم المعروض</Label>
-              <Input
-                id="display-name"
-                placeholder="أدخل اسمك الكامل"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">البريد الإلكتروني</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="example@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                dir="ltr"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">رقم الجوال (اختياري)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+966 5X XXX XXXX"
-              dir="ltr"
-            />
-          </div>
-
-          {/* Security info */}
-          <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <Shield className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-blue-800">تغيير كلمة المرور</p>
-              <p className="text-xs text-blue-600 mt-0.5">
-                يمكنك تغيير كلمة المرور من خلال خيار "نسيت كلمة المرور" في صفحة تسجيل الدخول
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              onClick={handleSaveProfile}
-              className="bg-blue-600 hover:bg-blue-700 gap-2"
-            >
-              {profileSaved ? (
-                <><Check className="h-4 w-4" /> تم الحفظ</>
-              ) : (
-                <><Save className="h-4 w-4" /> حفظ التغييرات</>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Section 2: App Preferences ── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-purple-600" />
-            تفضيلات التطبيق
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Language */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-                <Languages className="h-4 w-4 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">لغة التطبيق</p>
-                <p className="text-xs text-gray-500">تغيير لغة الواجهة</p>
-              </div>
-            </div>
-            <Select
-              value={locale}
-              onValueChange={(v) => setLocale(v as 'en' | 'ar')}
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ar">العربية 🇸🇦</SelectItem>
-                <SelectItem value="en">English 🇬🇧</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <hr className="border-gray-100" />
-
-          {/* Currency */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                <DollarSign className="h-4 w-4 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">العملة الافتراضية</p>
-                <p className="text-xs text-gray-500">العملة المستخدمة في عرض المبالغ</p>
-              </div>
-            </div>
-            <Select value={currency} onValueChange={setCurrency}>
-              <SelectTrigger className="w-36">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SAR">ريال سعودي (SAR)</SelectItem>
-                <SelectItem value="USD">دولار أمريكي (USD)</SelectItem>
-                <SelectItem value="EUR">يورو (EUR)</SelectItem>
-                <SelectItem value="AED">درهم إماراتي (AED)</SelectItem>
-                <SelectItem value="KWD">دينار كويتي (KWD)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <hr className="border-gray-100" />
-
-          {/* Date format */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
-                <Globe className="h-4 w-4 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">تنسيق التاريخ</p>
-                <p className="text-xs text-gray-500">الطريقة المفضلة لعرض التواريخ</p>
-              </div>
-            </div>
-            <Select value={dateFormat} onValueChange={setDateFormat}>
-              <SelectTrigger className="w-36">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="dd/mm/yyyy">DD/MM/YYYY</SelectItem>
-                <SelectItem value="mm/dd/yyyy">MM/DD/YYYY</SelectItem>
-                <SelectItem value="yyyy-mm-dd">YYYY-MM-DD</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              onClick={handleSavePreferences}
-              className="bg-purple-600 hover:bg-purple-700 gap-2"
-            >
-              {prefSaved ? (
-                <><Check className="h-4 w-4" /> تم الحفظ</>
-              ) : (
-                <><Save className="h-4 w-4" /> حفظ التفضيلات</>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Section 3: Notification Preferences ── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-amber-600" />
-            تفضيلات الإشعارات
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="text-sm font-medium text-gray-900">تنبيه استحقاق الاستثمارات</p>
-              <p className="text-xs text-gray-500">إشعار عند اقتراب تاريخ استحقاق أي استثمار</p>
-            </div>
-            <Switch
-              checked={notifMaturity}
-              onCheckedChange={setNotifMaturity}
-            />
-          </div>
-
-          <hr className="border-gray-100" />
-
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="text-sm font-medium text-gray-900">تنبيه الاستثمارات المتأخرة</p>
-              <p className="text-xs text-gray-500">إشعار عند تجاوز تاريخ الاستحقاق</p>
-            </div>
-            <Switch
-              checked={notifOverdue}
-              onCheckedChange={setNotifOverdue}
-            />
-          </div>
-
-          <hr className="border-gray-100" />
-
-          <div className="flex items-center justify-between py-2">
-            <div>
-              <p className="text-sm font-medium text-gray-900">إشعارات الاستثمارات الجديدة</p>
-              <p className="text-xs text-gray-500">إشعار عند إنشاء استثمار جديد</p>
-            </div>
-            <Switch
-              checked={notifNewInvestment}
-              onCheckedChange={setNotifNewInvestment}
-            />
-          </div>
-
-          <div className="mt-2 flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
-            <Bell className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-amber-700">
-              سيتم تفعيل إرسال الإشعارات التلقائية في تحديث قادم — هذه الإعدادات جاهزة للربط
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* ── Footer: Global Save ───────────────────────────────────── */}
+      <footer className="flex flex-col items-end gap-3 pb-8">
+        <Toast status={toast} />
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-xl transition-colors text-sm"
+          >
+            إلغاء
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 px-10 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
+          >
+            {saving
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري الحفظ...</>
+              : prefSaved
+              ? <><Check className="h-4 w-4" /> تم الحفظ</>
+              : <><Save className="h-4 w-4" /> حفظ التغييرات</>}
+          </button>
+        </div>
+      </footer>
     </div>
   )
 }

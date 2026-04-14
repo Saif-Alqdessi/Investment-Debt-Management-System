@@ -1,75 +1,111 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import {
-  BarChart2,
-  PieChart,
-  CalendarDays,
-  TrendingUp,
-  DollarSign,
-  Clock,
-  Construction,
-} from 'lucide-react'
 import { getInvestments } from '@/app/dashboard/investments/actions'
-import { getDebts } from '@/app/dashboard/debts/actions'
 import { formatCurrency } from '@/lib/utils'
+import { ReportExportButton } from '@/components/report-export-button'
+import { TrendingUp, CalendarDays, Clock } from 'lucide-react'
+import type { Database } from '@/types/database'
 
-const categoryConfig: Record<string, { label: string; color: string; bg: string }> = {
-  rateb: { label: 'Rateb', color: 'text-blue-700', bg: 'bg-blue-500' },
-  'fixed-deposit': { label: 'Fixed Deposit', color: 'text-emerald-700', bg: 'bg-emerald-500' },
-  'business-loan': { label: 'Business Loan', color: 'text-amber-700', bg: 'bg-amber-500' },
-  'personal-loan': { label: 'Personal Loan', color: 'text-purple-700', bg: 'bg-purple-500' },
-}
+type Investment = Database['public']['Tables']['investments']['Row']
 
 const MONTH_NAMES_AR = [
   'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
   'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
 ]
 
+const categoryConfig: Record<string, { label: string }> = {
+  rateb: { label: 'Rateb' },
+  'fixed-deposit': { label: 'Fixed Deposit' },
+  'business-loan': { label: 'Business Loan' },
+  'personal-loan': { label: 'Personal Loan' },
+}
+
 export default async function ReportsPage() {
-  const [investmentsResult, debtsResult] = await Promise.all([
+  const [investmentsResult] = await Promise.all([
     getInvestments(),
-    getDebts(),
   ])
 
-  const investments = (investmentsResult.success ? investmentsResult.data : []) as any[]
-  const debts = (debtsResult.success ? debtsResult.data : []) as any[]
+  const investments = (investmentsResult.success ? investmentsResult.data : []) as Investment[]
 
-  // ── Portfolio Growth data: group investments by creation month (last 6 months) ──
+  // ── KPI Calculations ─────────────────────────────────────────────────────
+  const totalCapital   = investments.reduce((s, i) => s + (Number(i.principal_amount) || 0), 0)
+  const totalProfits   = investments.reduce((s, i) => s + (Number(i.profit_amount)    || 0), 0)
+  const totalROI       = totalCapital > 0 ? (totalProfits / totalCapital) * 100 : 0
+  const monthlyProfit  = totalProfits / 12
+
+  // Risk score: % of investments past due
+  const overdueCount   = investments.filter(i => {
+    if (!i.due_date) return false
+    return new Date(i.due_date as string) < new Date() && i.status === 'active'
+  }).length
+  const riskPct        = investments.length > 0 ? (overdueCount / investments.length) * 100 : 0
+  const riskLabel      = riskPct < 15 ? 'منخفض' : riskPct < 40 ? 'متوسط' : 'مرتفع'
+  const riskColor      = riskPct < 15 ? 'text-emerald-600 bg-emerald-50' : riskPct < 40 ? 'text-amber-600 bg-amber-50' : 'text-red-600 bg-red-50'
+  const riskBarColor   = riskPct < 15 ? 'bg-emerald-500' : riskPct < 40 ? 'bg-amber-500' : 'bg-red-500'
+
+  // ── Portfolio Growth: group by month (last 12) ──────────────────────────
   const now = new Date()
   const growthMonths: { label: string; value: number; count: number }[] = []
-  for (let i = 5; i >= 0; i--) {
+  for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const label = MONTH_NAMES_AR[d.getMonth()]
     const monthInvs = investments.filter((inv) => {
-      const c = new Date(inv.created_at)
+      const c = new Date(inv.created_at as string)
       return c.getFullYear() === d.getFullYear() && c.getMonth() === d.getMonth()
     })
     growthMonths.push({
-      label,
-      value: monthInvs.reduce((s: number, inv: any) => s + (inv.principal_amount ?? 0), 0),
+      label: MONTH_NAMES_AR[d.getMonth()],
+      value: monthInvs.reduce((s, inv) => s + (Number(inv.principal_amount) || 0), 0),
       count: monthInvs.length,
     })
   }
-  const maxGrowth = Math.max(...growthMonths.map((m) => m.value), 1)
+  // maxGrowth used only if rendering bar heights — kept via cumulativeValues below
 
-  // ── Category Distribution ──
+  // Compute cumulative for SVG path
+  const cumulativeValues = growthMonths.reduce<number[]>((acc, m, i) => {
+    acc.push((acc[i - 1] ?? 0) + m.value)
+    return acc
+  }, [])
+  const maxCumulative = Math.max(...cumulativeValues, 1)
+
+  // SVG area path (0-1000 wide, 0-100 tall, inverted Y)
+  const points = cumulativeValues.map((v, i) => {
+    const x = (i / (cumulativeValues.length - 1)) * 1000
+    const y = 100 - (v / maxCumulative) * 90
+    return `${x},${y}`
+  })
+  const linePath = `M${points.join(' L')}`
+  const areaPath = `${linePath} L1000,100 L0,100 Z`
+
+  // ── Category Distribution ────────────────────────────────────────────────
   const categoryTotals: Record<string, number> = {}
-  investments.forEach((inv: any) => {
+  investments.forEach((inv) => {
     const key = inv.category_id ?? 'other'
     categoryTotals[key] = (categoryTotals[key] ?? 0) + (inv.principal_amount ?? 0)
   })
   const totalPortfolio = Object.values(categoryTotals).reduce((s, v) => s + v, 0) || 1
   const categoryEntries = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])
 
-  // ── Monthly Revenue Schedule: investments due within next 12 months ──
-  const scheduleMonths: { label: string; date: Date; items: any[] }[] = []
+  // SVG donut segments
+  const donutColors = ['stroke-blue-600', 'stroke-emerald-600', 'stroke-amber-500', 'stroke-purple-500', 'stroke-pink-500']
+  const dotColors   = ['bg-blue-600', 'bg-emerald-600', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500']
+  const circumference = 2 * Math.PI * 16
+  let donutOffset = 0
+  const donutSegments = categoryEntries.map(([key, val], i) => {
+    const pct = val / totalPortfolio
+    const dash = pct * circumference
+    const gap  = circumference - dash
+    const seg  = { key, val, pct, dash, gap, offset: donutOffset, colorClass: donutColors[i % donutColors.length] }
+    donutOffset += dash
+    return seg
+  })
+
+  // ── Revenue Schedule ─────────────────────────────────────────────────────
+  const scheduleMonths: { label: string; date: Date; items: Investment[] }[] = []
   for (let i = 0; i < 12; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
-    const nextMonth = new Date(d.getFullYear(), d.getMonth() + 1, 1)
-    const due = investments.filter((inv: any) => {
+    const next = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+    const due = investments.filter((inv) => {
       if (!inv.due_date) return false
       const dd = new Date(inv.due_date)
-      return dd >= d && dd < nextMonth
+      return dd >= d && dd < next
     })
     if (due.length > 0 || i < 3) {
       scheduleMonths.push({ label: MONTH_NAMES_AR[d.getMonth()], date: d, items: due })
@@ -77,247 +113,226 @@ export default async function ReportsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">التقارير</h1>
-          <p className="text-gray-500 mt-1">تحليل شامل لأداء محفظتك الاستثمارية</p>
-        </div>
-        <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50 flex items-center gap-1.5 px-3 py-1.5">
-          <Construction className="h-3.5 w-3.5" />
-          قيد التطوير — الرسوم البيانية التفاعلية قادمة
-        </Badge>
+    <div className="space-y-8">
+      {/* ── Page Header ─────────────────────────────────────────── */}
+      <div>
+        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">التقارير المالية</h1>
+        <p className="text-slate-500 text-base mt-1">نظرة تحليلية شاملة على أداء محفظتك الاستثمارية ونمو الأصول</p>
       </div>
 
-      {/* ── 1. Portfolio Growth (Bar Chart) ── */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <BarChart2 className="h-5 w-5 text-blue-600" />
-            نمو المحفظة — آخر 6 أشهر
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {investments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-300">
-              <BarChart2 className="h-14 w-14 mb-3" />
-              <p className="text-sm text-gray-400">لا توجد بيانات استثمار بعد</p>
-            </div>
-          ) : (
-            <div className="mt-4">
-              {/* Bar chart */}
-              <div className="flex items-end gap-3 h-40">
-                {growthMonths.map((m, idx) => {
-                  const pct = maxGrowth > 0 ? (m.value / maxGrowth) * 100 : 0
-                  const isCurrentMonth = idx === growthMonths.length - 1
-                  return (
-                    <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
-                      <span className="text-[10px] text-gray-500 font-mono">
-                        {m.value > 0 ? formatCurrency(m.value).replace('SAR', '').trim() : '—'}
-                      </span>
-                      <div className="w-full flex items-end h-28 relative group">
-                        <div
-                          className={`w-full rounded-t-md transition-all ${isCurrentMonth ? 'bg-blue-600' : 'bg-blue-200'} group-hover:bg-blue-400`}
-                          style={{ height: `${Math.max(pct, m.value > 0 ? 4 : 0)}%` }}
-                        />
-                        {/* Tooltip */}
-                        <div className="absolute bottom-full mb-1 start-1/2 -translate-x-1/2 hidden group-hover:block z-10">
-                          <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-                            {m.count} استثمار — {formatCurrency(m.value)}
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[10px] text-gray-500">{m.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-              {/* Summary */}
-              <div className="mt-4 grid grid-cols-3 gap-3 pt-4 border-t border-gray-100">
-                <div className="text-center">
-                  <p className="text-xs text-gray-500">إجمالي الاستثمارات</p>
-                  <p className="font-bold text-gray-900">{investments.length}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-gray-500">إجمالي رأس المال</p>
-                  <p className="font-bold text-gray-900">{formatCurrency(investments.reduce((s: number, i: any) => s + (i.principal_amount ?? 0), 0))}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-gray-500">إجمالي الأرباح المتوقعة</p>
-                  <p className="font-bold text-emerald-600">{formatCurrency(investments.reduce((s: number, i: any) => s + (i.profit_amount ?? 0), 0))}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* ── KPI Row ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* ROI */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border-s-4 border-s-blue-600 border-y border-e border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 mb-1">إجمالي العائد ROI</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold tabular-nums text-slate-900">{totalROI.toFixed(1)}%</span>
+            <span className="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
+              <TrendingUp className="h-3 w-3" />
+              نشط
+            </span>
+          </div>
+        </div>
 
-      {/* ── 2. Category Distribution (Pie placeholder) ── */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <PieChart className="h-5 w-5 text-purple-600" />
-            توزيع المحفظة حسب الفئة
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {categoryEntries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-300">
-              <PieChart className="h-14 w-14 mb-3" />
-              <p className="text-sm text-gray-400">لا توجد بيانات فئات بعد</p>
+        {/* Monthly profit */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 mb-1">صافي الربح الشهري</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold tabular-nums text-slate-900">{formatCurrency(monthlyProfit)}</span>
+          </div>
+        </div>
+
+        {/* Annual revenue */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 mb-1">الإيرادات السنوية المتوقعة</p>
+          <span className="text-2xl font-bold tabular-nums text-slate-900">{formatCurrency(totalProfits)}</span>
+        </div>
+
+        {/* Risk */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 mb-2">مؤشر مخاطر المحفظة</p>
+          <div className="flex items-center gap-3 mt-1">
+            <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className={`h-full rounded-full ${riskBarColor}`} style={{ width: `${Math.max(riskPct, 5)}%` }} />
+            </div>
+            <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${riskColor}`}>{riskLabel}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Area Chart ──────────────────────────────────────────── */}
+      <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h3 className="text-xl font-bold text-slate-900">نمو الاستثمارات بمرور الوقت</h3>
+            <p className="text-sm text-slate-500 mt-0.5">تحليل تراكمي للأصول خلال الـ 12 شهراً الماضية</p>
+          </div>
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+            <span className="px-4 py-1.5 text-xs font-bold bg-white text-blue-600 rounded-md shadow-sm">سنوي</span>
+            <span className="px-4 py-1.5 text-xs font-bold text-slate-500">شهري</span>
+          </div>
+        </div>
+
+        {/* SVG Area Chart */}
+        <div className="h-64 w-full relative">
+          <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+            {[0,1,2,3].map(i => <div key={i} className="border-b border-slate-400 w-full" />)}
+          </div>
+          {investments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-slate-300">
+              <TrendingUp className="h-12 w-12 mb-2" />
+              <p className="text-sm text-slate-400">لا توجد بيانات استثمار بعد</p>
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row items-center gap-8 mt-2">
-              {/* Donut SVG */}
-              <div className="relative flex-shrink-0">
-                <svg viewBox="0 0 120 120" className="w-36 h-36 -rotate-90">
-                  {(() => {
-                    const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6B7280']
-                    let offset = 0
-                    const circumference = 2 * Math.PI * 40
-                    return categoryEntries.map(([key, val], i) => {
-                      const pct = val / totalPortfolio
-                      const dash = pct * circumference
-                      const gap = circumference - dash
-                      const el = (
-                        <circle
-                          key={key}
-                          cx="60" cy="60" r="40"
-                          fill="none"
-                          stroke={colors[i % colors.length]}
-                          strokeWidth="20"
-                          strokeDasharray={`${dash} ${gap}`}
-                          strokeDashoffset={-offset}
-                        />
-                      )
-                      offset += dash
-                      return el
-                    })
-                  })()}
+            <svg
+              className="absolute bottom-8 inset-x-0 w-full"
+              style={{ height: '85%' }}
+              viewBox="0 0 1000 100"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="chart-grad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="#004ac6" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="#004ac6" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d={areaPath} fill="url(#chart-grad)" />
+              <path d={linePath} fill="none" stroke="#004ac6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+          {/* Month labels */}
+          <div className="absolute bottom-0 inset-x-0 flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums">
+            {growthMonths.filter((_, i) => i % 2 === 0).map(m => <span key={m.label}>{m.label}</span>)}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Split: Distribution + Top Performers ────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+        {/* Donut: Investment Distribution */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+          <h3 className="text-lg font-bold text-slate-900 mb-6">توزيع الاستثمارات</h3>
+          {categoryEntries.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-slate-300">
+              <p className="text-sm text-slate-400 mt-2">لا توجد بيانات فئات</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              {/* SVG Donut */}
+              <div className="relative w-40 h-40 mb-8">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <circle className="stroke-slate-100" cx="18" cy="18" fill="none" r="16" strokeWidth="4" />
+                  {donutSegments.map(seg => (
+                    <circle
+                      key={seg.key}
+                      className={seg.colorClass}
+                      cx="18" cy="18" fill="none" r="16"
+                      strokeWidth="4"
+                      strokeDasharray={`${seg.dash} ${seg.gap}`}
+                      strokeDashoffset={-seg.offset}
+                    />
+                  ))}
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xs text-gray-500">المجموع</span>
-                  <span className="text-sm font-bold text-gray-900">{investments.length}</span>
+                  <span className="text-2xl font-extrabold tabular-nums">100%</span>
+                  <span className="text-[10px] text-slate-500 font-bold">إجمالي المحفظة</span>
                 </div>
               </div>
-
               {/* Legend */}
-              <div className="flex-1 space-y-3 w-full">
-                {categoryEntries.map(([key, val], i) => {
-                  const colors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500', 'bg-gray-500']
-                  const pct = ((val / totalPortfolio) * 100).toFixed(1)
-                  const conf = categoryConfig[key]
-                  return (
-                    <div key={key} className="flex items-center gap-3">
-                      <div className={`h-3 w-3 rounded-full flex-shrink-0 ${colors[i % colors.length]}`} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 truncate">
-                            {conf?.label ?? key}
-                          </span>
-                          <span className="text-xs text-gray-500 ms-2">{pct}%</span>
-                        </div>
-                        <div className="w-full bg-gray-100 rounded-full h-1.5">
-                          <div
-                            className={`h-1.5 rounded-full ${colors[i % colors.length]}`}
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-gray-400">{formatCurrency(val)}</span>
-                      </div>
+              <div className="w-full space-y-3">
+                {donutSegments.map((seg, i) => (
+                  <div key={seg.key} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${dotColors[i % dotColors.length]}`} />
+                      <span className="text-sm font-medium text-slate-500">
+                        {categoryConfig[seg.key]?.label ?? seg.key}
+                      </span>
                     </div>
-                  )
-                })}
+                    <span className="text-sm font-bold tabular-nums">{(seg.pct * 100).toFixed(0)}%</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* ── 3. Monthly Revenue Schedule ── */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <CalendarDays className="h-5 w-5 text-emerald-600" />
-            جدول الإيرادات الشهري — الاستحقاقات القادمة
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Revenue Schedule */}
+        <div className="lg:col-span-3 bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+          <h3 className="text-lg font-bold text-slate-900 mb-6">جدول الإيرادات الشهري</h3>
           {investments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-300">
-              <CalendarDays className="h-14 w-14 mb-3" />
-              <p className="text-sm text-gray-400">لا توجد استثمارات مجدولة</p>
+            <div className="flex flex-col items-center justify-center py-12 text-slate-300">
+              <CalendarDays className="h-12 w-12 mb-2" />
+              <p className="text-sm text-slate-400">لا توجد استثمارات مجدولة</p>
             </div>
           ) : (
-            <div className="space-y-3 mt-2">
-              {scheduleMonths.filter(m => m.items.length > 0).length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-                  <Clock className="h-10 w-10 mb-2 text-gray-200" />
-                  <p className="text-sm">لا توجد استحقاقات في الأشهر الـ 12 القادمة</p>
-                </div>
-              ) : (
-                scheduleMonths
-                  .filter((m) => m.items.length > 0)
-                  .map((month) => {
-                    const totalPayout = month.items.reduce((s: number, i: any) => s + (i.total_payout ?? 0), 0)
-                    const totalProfit = month.items.reduce((s: number, i: any) => s + (i.profit_amount ?? 0), 0)
-                    return (
-                      <div key={month.label} className="border border-gray-100 rounded-xl overflow-hidden">
-                        {/* Month header */}
-                        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-100">
-                          <div className="flex items-center gap-2">
-                            <CalendarDays className="h-4 w-4 text-gray-400" />
-                            <span className="font-semibold text-sm text-gray-800">
-                              {month.label} {month.date.getFullYear()}
-                            </span>
-                            <Badge variant="secondary" className="text-xs">
-                              {month.items.length} استثمار
-                            </Badge>
-                          </div>
-                          <div className="text-end">
-                            <p className="text-xs text-gray-500">إجمالي الصرف</p>
-                            <p className="font-bold text-sm text-gray-900">{formatCurrency(totalPayout)}</p>
-                          </div>
-                        </div>
-
-                        {/* Investment rows */}
-                        <div className="divide-y divide-gray-50">
-                          {month.items.map((inv: any) => (
-                            <div key={inv.id} className="flex items-center justify-between px-4 py-3 hover:bg-blue-50/30 transition-colors">
-                              <div>
-                                <p className="text-sm font-medium text-gray-900">{inv.investor_name}</p>
-                                <p className="text-xs text-gray-500">
-                                  استحقاق: {new Date(inv.due_date).toLocaleDateString('ar-SA')}
-                                </p>
-                              </div>
-                              <div className="text-end space-y-0.5">
-                                <div className="flex items-center gap-2 justify-end">
-                                  <span className="text-xs text-gray-400">رأس المال:</span>
-                                  <span className="text-sm font-mono text-gray-700">{formatCurrency(inv.principal_amount)}</span>
-                                </div>
-                                <div className="flex items-center gap-2 justify-end">
-                                  <TrendingUp className="h-3 w-3 text-emerald-500" />
-                                  <span className="text-sm font-mono font-semibold text-emerald-600">+{formatCurrency(inv.profit_amount)}</span>
-                                </div>
-                              </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <th className="pb-4 text-start">المستثمر</th>
+                    <th className="pb-4 text-center">تاريخ الاستحقاق</th>
+                    <th className="pb-4 text-end">الأرباح</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {scheduleMonths
+                    .filter(m => m.items.length > 0)
+                    .flatMap(m => m.items)
+                    .slice(0, 6)
+                    .map((inv) => (
+                      <tr key={inv.id} className="hover:bg-slate-50 transition-colors group">
+                        <td className="py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                              <TrendingUp className="h-4 w-4" />
                             </div>
-                          ))}
-                        </div>
-
-                        {/* Month footer totals */}
-                        <div className="flex items-center justify-between px-4 py-2 bg-emerald-50 border-t border-emerald-100">
-                          <span className="text-xs text-emerald-700 font-medium">إجمالي الأرباح المتوقعة هذا الشهر</span>
-                          <span className="font-bold text-emerald-700 font-mono">{formatCurrency(totalProfit)}</span>
-                        </div>
-                      </div>
-                    )
-                  })
-              )}
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">{inv.investor_name}</p>
+                              <p className="text-[10px] text-slate-400">{formatCurrency(inv.principal_amount)}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 text-center">
+                          <span className="text-sm font-medium text-slate-600 tabular-nums">
+                            {new Date(inv.due_date).toLocaleDateString('ar-SA')}
+                          </span>
+                        </td>
+                        <td className="py-4 text-end">
+                          <span className="text-sm font-bold text-emerald-600 tabular-nums">
+                            +{formatCurrency(inv.profit_amount)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  {scheduleMonths.every(m => m.items.length === 0) && (
+                    <tr>
+                      <td colSpan={3} className="py-12 text-center text-sm text-slate-400">
+                        <Clock className="h-8 w-8 mx-auto mb-2 text-slate-200" />
+                        لا توجد استحقاقات في الأشهر القادمة
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* ── Export Footer Banner ─────────────────────────────────── */}
+      <div className="bg-blue-600 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-600/20">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <span className="text-white font-bold text-xl">📄</span>
+          </div>
+          <div>
+            <h4 className="text-white text-xl font-bold mb-1">التقرير السنوي الكامل {new Date().getFullYear()}</h4>
+            <p className="text-white/70 text-sm">يتضمن تحليل المخاطر، العوائد التفصيلية، والتوقعات المالية للعام القادم.</p>
+          </div>
+        </div>
+        <ReportExportButton />
+      </div>
     </div>
   )
 }

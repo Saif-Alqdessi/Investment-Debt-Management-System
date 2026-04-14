@@ -10,10 +10,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar, Calculator, Users, Plus, Trash2 } from 'lucide-react'
+import { Calculator, Users } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import { useLanguage } from '@/lib/i18n/context'
 import { SharedInvestorsForm } from './shared-investors-form'
@@ -48,13 +47,15 @@ export function InvestmentForm({ initialData, onSubmit, isLoading: externalLoadi
     resolver: zodResolver(investmentSchema),
     defaultValues: {
       is_shared: false,
+      auto_renew: false,
+      is_profit_delivered: false,
       shared_investors: [],
       ...initialData,
     },
   })
 
   const watchedValues = watch()
-  const { principal_amount, profit_rate, commission_rate, is_shared, duration, category_id, starting_date, due_date } = watchedValues
+  const { principal_amount, profit_rate, commission_rate, is_shared, auto_renew, is_profit_delivered, duration, category_id, starting_date, due_date } = watchedValues
 
   const toDateInputValue = (val: Date | string | undefined) => {
     if (!val) return ''
@@ -172,25 +173,45 @@ export function InvestmentForm({ initialData, onSubmit, isLoading: externalLoadi
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="duration">{t('forms.duration')} *</Label>
-                  <Select
-                    value={duration ?? ''}
-                    onValueChange={(value) => setValue('duration', value as any, { shouldValidate: true })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('forms.select_duration')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="monthly">{t('investments.monthly')}</SelectItem>
-                      <SelectItem value="quarterly">{t('investments.quarterly')}</SelectItem>
-                      <SelectItem value="semi_annual">{t('investments.semi_annual')}</SelectItem>
-                      <SelectItem value="annual">{t('investments.annual')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.duration && (
-                    <p className="text-sm text-red-600">{errors.duration.message}</p>
-                  )}
+                <div className="flex gap-4">
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="duration">{t('forms.duration')} *</Label>
+                    <Select
+                      value={duration ?? ''}
+                      onValueChange={(value) => setValue('duration', value as 'monthly' | 'quarterly' | 'semi_annual' | 'annual', { shouldValidate: true })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('forms.select_duration')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="monthly">{t('investments.monthly')}</SelectItem>
+                        <SelectItem value="quarterly">{t('investments.quarterly')}</SelectItem>
+                        <SelectItem value="semi_annual">{t('investments.semi_annual')}</SelectItem>
+                        <SelectItem value="annual">{t('investments.annual')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.duration && (
+                      <p className="text-sm text-red-600">{errors.duration.message}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-4 shrink-0">
+                    <div className="flex flex-col items-center justify-center space-y-2 pt-[6px]">
+                      <Label htmlFor="auto_renew" className="text-sm">{t('forms.auto_renew')}</Label>
+                      <Switch
+                        id="auto_renew"
+                        checked={auto_renew}
+                        onCheckedChange={(checked) => setValue('auto_renew', checked)}
+                      />
+                    </div>
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <Label htmlFor="is_profit_delivered" className="text-sm text-center leading-tight">{t('forms.profit_delivered')}</Label>
+                      <Switch
+                        id="is_profit_delivered"
+                        checked={is_profit_delivered ?? false}
+                        onCheckedChange={(checked) => setValue('is_profit_delivered', checked)}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">

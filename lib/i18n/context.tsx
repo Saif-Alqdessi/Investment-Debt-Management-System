@@ -13,12 +13,12 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-function getNestedValue(obj: any, path: string): string {
+function getNestedValue(obj: Record<string, unknown>, path: string): string {
   const keys = path.split('.')
-  let current = obj
+  let current: unknown = obj
   for (const key of keys) {
     if (current === undefined || current === null) return path
-    current = current[key]
+    current = (current as Record<string, unknown>)[key]
   }
   return typeof current === 'string' ? current : path
 }

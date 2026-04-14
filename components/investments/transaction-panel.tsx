@@ -159,7 +159,7 @@ export function TransactionPanel({ investmentId, transactions }: TransactionPane
             </CardTitle>
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 print:hidden"
               onClick={() => { resetForm(); setOpen(true) }}
             >
               <Plus className="me-2 h-4 w-4" />

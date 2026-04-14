@@ -5,13 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
+const CURRENCY_LOCALE: Record<string, string> = {
+  SAR: 'ar-SA',
+  USD: 'en-US',
+  TRY: 'tr-TR',
+}
+
+export function formatCurrency(amount: number, currencyCode = 'USD'): string {
+  const code   = CURRENCY_LOCALE[currencyCode] ? currencyCode : 'USD'
+  const locale = CURRENCY_LOCALE[code]
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'USD',
+    currency: code,
     minimumFractionDigits: 2,
   }).format(amount)
 }
+
 
 export function formatPercentage(rate: number): string {
   return `${(rate * 100).toFixed(2)}%`

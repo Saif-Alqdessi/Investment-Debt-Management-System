@@ -1,6 +1,6 @@
 export type Locale = 'en' | 'ar'
 
-export const translations: Record<Locale, Record<string, any>> = {
+export const translations: Record<Locale, Record<string, unknown>> = {
   en: {
     dir: 'ltr',
     sidebar: {
@@ -81,6 +81,7 @@ export const translations: Record<Locale, Record<string, any>> = {
       view_full_details: 'View Full Details',
       edit_investment: 'Edit Investment',
       manage_sub_investors: 'Manage Sub-Investors',
+      profit_delivered_col: 'Delivered',
       annual: 'Annual',
       semi_annual: 'Semi-Annual',
       quarterly: 'Quarterly',
@@ -162,6 +163,26 @@ export const translations: Record<Locale, Record<string, any>> = {
       select_duration: 'Select duration',
       select_category: 'Select category',
       enter_investor: 'Enter investor name',
+      auto_renew: 'Auto Renew',
+      profit_delivered: 'Profit Delivered',
+      // Shared Investors Form
+      shared_investors_title: 'Shared Investors',
+      shared_investors_subtitle: 'Split this investment among multiple sub-investors',
+      add_investor: 'Add Investor',
+      sub_investor_placeholder: 'Sub-Investor #{num}',
+      amount_paid: 'Amount Paid',
+      ownership_share: 'Ownership %',
+      sub_profit: 'Sub-Profit',
+      no_sub_investors: 'No sub-investors added yet.',
+      no_sub_investors_hint: 'Click "Add Investor" to split this investment.',
+      allocated: 'Total Allocated',
+      remaining: 'Remaining',
+      principal_total: 'Total Principal',
+      over_allocated: 'Over Allocated',
+      allocation_progress: 'Allocation Progress',
+      custom_commission_rate: 'Custom Commission Rate (%)',
+      optional_rate: 'Optional custom rate',
+      // Debt forms
       new_debt: 'New Debt',
       new_debt_subtitle: 'Record a new debt with interest tracking and payment management.',
       back_to_debts: 'Back to Debts',
@@ -282,6 +303,7 @@ export const translations: Record<Locale, Record<string, any>> = {
       view_full_details: 'عرض التفاصيل الكاملة',
       edit_investment: 'تعديل الاستثمار',
       manage_sub_investors: 'إدارة المستثمرين الفرعيين',
+      profit_delivered_col: 'التسليم',
       annual: 'سنوي',
       semi_annual: 'نصف سنوي',
       quarterly: 'ربع سنوي',
@@ -363,6 +385,26 @@ export const translations: Record<Locale, Record<string, any>> = {
       select_duration: 'اختر المدة',
       select_category: 'اختر الفئة',
       enter_investor: 'أدخل اسم المستثمر',
+      auto_renew: 'تجديد تلقائي',
+      profit_delivered: 'تم تسليم الأرباح',
+      // Shared Investors Form
+      shared_investors_title: 'المستثمرون المشتركون',
+      shared_investors_subtitle: 'تقسيم هذا الاستثمار بين عدة مستثمرين فرعيين',
+      add_investor: 'إضافة مستثمر',
+      sub_investor_placeholder: 'مستثمر فرعي #{num}',
+      amount_paid: 'المبلغ المدفوع',
+      ownership_share: 'نسبة الملكية',
+      sub_profit: 'الربح الفرعي',
+      no_sub_investors: 'لم يتم إضافة مستثمرين فرعيين بعد.',
+      no_sub_investors_hint: 'انقر "إضافة مستثمر" لتقسيم هذا الاستثمار.',
+      allocated: 'المبلغ الموزع',
+      remaining: 'المبلغ المتبقي',
+      principal_total: 'إجمالي رأس المال',
+      over_allocated: 'تجاوز الحد',
+      allocation_progress: 'نسبة التوزيع',
+      custom_commission_rate: 'نسبة عمولة خاصة (%)',
+      optional_rate: 'نسبة مخصصة اختيارية',
+      // Debt forms
       new_debt: 'دين جديد',
       new_debt_subtitle: 'تسجيل دين جديد مع تتبع الفائدة وإدارة المدفوعات.',
       back_to_debts: 'العودة للديون',

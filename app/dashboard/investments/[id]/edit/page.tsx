@@ -23,23 +23,24 @@ export default function EditInvestmentPage() {
       if (!result.success || !result.data) {
         setNotFound(true)
       } else {
-        const inv = result.data as any
+        const inv = result.data as Record<string, unknown> & { shared_investors?: Record<string, unknown>[] }
         setInitialData({
-          investor_name: inv.investor_name,
-          principal_amount: inv.principal_amount,
-          starting_date: new Date(inv.starting_date),
-          due_date: new Date(inv.due_date),
-          category_id: inv.category_id ?? undefined,
-          duration: inv.duration,
-          profit_rate: parseFloat((inv.profit_rate * 100).toFixed(4)),
-          commission_rate: parseFloat((inv.commission_rate * 100).toFixed(4)),
-          notes: inv.notes ?? undefined,
-          is_shared: inv.is_shared ?? false,
-          shared_investors: inv.shared_investors?.map((si: any) => ({
-            investor_name: si.investor_name,
-            share_percentage: si.share_percentage,
+          investor_name:     inv.investor_name     as string,
+          principal_amount:  inv.principal_amount  as number,
+          starting_date:     new Date(inv.starting_date as string),
+          due_date:          new Date(inv.due_date as string),
+          category_id:       (inv.category_id as string | null) ?? undefined,
+          duration:          inv.duration          as 'monthly' | 'quarterly' | 'semi_annual' | 'annual',
+          profit_rate:       parseFloat(((inv.profit_rate as number) * 100).toFixed(4)),
+          commission_rate:   parseFloat(((inv.commission_rate as number) * 100).toFixed(4)),
+          notes:             (inv.notes as string | null) ?? undefined,
+          is_shared:         (inv.is_shared as boolean) ?? false,
+          shared_investors:  inv.shared_investors?.map((si: Record<string, unknown>) => ({
+            investor_name:          si.investor_name as string,
+            share_percentage:       si.share_percentage as number,
+            amount_paid:            (si.share_principal as number) ?? 0,
             custom_commission_rate: si.custom_commission_rate
-              ? parseFloat((si.custom_commission_rate * 100).toFixed(4))
+              ? parseFloat(((si.custom_commission_rate as number) * 100).toFixed(4))
               : undefined,
           })) ?? [],
         })

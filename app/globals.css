@@ -41,3 +41,25 @@
     text-wrap: balance;
   }
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 14mm;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Remove box-shadows and backgrounds on cards for cleaner output */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+}

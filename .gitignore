@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Rareb dev artifacts (design references, not production code)
+stitch/
+docs/
+Translation\ Dictionary.json
+*.sql                      # Apply migrations via Supabase dashboard, not git

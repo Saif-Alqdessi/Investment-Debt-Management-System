@@ -17,6 +17,9 @@ export interface Database {
           phone: string | null
           role: 'owner' | 'admin' | 'viewer'
           avatar_url: string | null
+          preferred_currency: string
+          email_notifications: boolean
+          browser_notifications: boolean
           created_at: string
           updated_at: string
         }
@@ -27,6 +30,9 @@ export interface Database {
           phone?: string | null
           role?: 'owner' | 'admin' | 'viewer'
           avatar_url?: string | null
+          preferred_currency?: string
+          email_notifications?: boolean
+          browser_notifications?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +43,9 @@ export interface Database {
           phone?: string | null
           role?: 'owner' | 'admin' | 'viewer'
           avatar_url?: string | null
+          preferred_currency?: string
+          email_notifications?: boolean
+          browser_notifications?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -80,7 +89,10 @@ export interface Database {
           total_payout: number
           status: 'active' | 'matured' | 'renewed' | 'withdrawn'
           is_shared: boolean
+          alert_dismissed: boolean
+          is_profit_delivered: boolean
           notes: string | null
+          user_id: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -100,7 +112,10 @@ export interface Database {
           total_payout?: number
           status?: 'active' | 'matured' | 'renewed' | 'withdrawn'
           is_shared?: boolean
+          alert_dismissed?: boolean
+          is_profit_delivered?: boolean
           notes?: string | null
+          user_id?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -120,7 +135,10 @@ export interface Database {
           total_payout?: number
           status?: 'active' | 'matured' | 'renewed' | 'withdrawn'
           is_shared?: boolean
+          alert_dismissed?: boolean
+          is_profit_delivered?: boolean
           notes?: string | null
+          user_id?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -186,6 +204,7 @@ export interface Database {
           remaining_amount: number
           debt_type: 'personal' | 'trust' | 'business' | 'loan'
           notes: string | null
+          user_id: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -205,6 +224,7 @@ export interface Database {
           remaining_amount?: number
           debt_type?: 'personal' | 'trust' | 'business' | 'loan'
           notes?: string | null
+          user_id?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -224,6 +244,7 @@ export interface Database {
           remaining_amount?: number
           debt_type?: 'personal' | 'trust' | 'business' | 'loan'
           notes?: string | null
+          user_id?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -258,6 +279,35 @@ export interface Database {
           payment_method?: string | null
           notes?: string | null
           recorded_by?: string | null
+          created_at?: string
+        }
+      }
+      investment_transactions: {
+        Row: {
+          id: string
+          investment_id: string
+          action_type: 'payout_profit' | 'add_capital' | 'withdraw_partial'
+          amount: number
+          transaction_date: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          investment_id: string
+          action_type: 'payout_profit' | 'add_capital' | 'withdraw_partial'
+          amount: number
+          transaction_date: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          investment_id?: string
+          action_type?: 'payout_profit' | 'add_capital' | 'withdraw_partial'
+          amount?: number
+          transaction_date?: string
+          notes?: string | null
           created_at?: string
         }
       }

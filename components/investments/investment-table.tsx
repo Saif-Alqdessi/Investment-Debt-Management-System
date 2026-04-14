@@ -1,28 +1,33 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table'
-import { 
-  Edit, 
-  Trash2, 
-  Eye, 
+import {
   Calendar,
+  Edit,
+  Trash2,
+  Eye,
   Users,
-  Loader2
+  Loader2,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react'
 import { formatCurrency, formatPercentage, calculateDaysRemaining, getStatusColor, getDaysRemainingColor } from '@/lib/utils'
 import { useLanguage } from '@/lib/i18n/context'
 import Link from 'next/link'
+import { toggleProfitDelivered } from '@/app/dashboard/investments/actions'
 
 const categoryConfig: Record<string, { label: string; color: string }> = {
   rateb: { label: 'Rateb', color: '#3B82F6' },
@@ -46,6 +51,7 @@ interface Investment {
   total_payout: number
   status: 'active' | 'matured' | 'renewed' | 'withdrawn'
   is_shared: boolean
+  is_profit_delivered?: boolean
   notes?: string
   created_at: string
 }
@@ -54,12 +60,42 @@ interface InvestmentTableProps {
   investments: Investment[]
   onDelete?: (id: string) => void
   loading?: boolean
+  currency?: string
 }
 
-export function InvestmentTable({ investments, onDelete, loading }: InvestmentTableProps) {
+export function InvestmentTable({ investments, onDelete, loading, currency = 'SAR' }: InvestmentTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+  const [sortField, setSortField] = useState<'principal_amount' | 'due_date' | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  // Track which rows are optimistically toggling delivery status
+  const [pendingDelivery, setPendingDelivery] = useState<Set<string>>(new Set())
+  const [, startTransition] = useTransition()
   const router = useRouter()
   const { t } = useLanguage()
+
+  const handleSort = (field: 'principal_amount' | 'due_date') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const sortedInvestments = [...investments].sort((a, b) => {
+    if (!sortField) return 0
+    if (sortField === 'principal_amount') {
+      return sortDirection === 'asc'
+        ? a.principal_amount - b.principal_amount
+        : b.principal_amount - a.principal_amount
+    }
+    if (sortField === 'due_date') {
+      const dateA = new Date(a.due_date).getTime()
+      const dateB = new Date(b.due_date).getTime()
+      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA
+    }
+    return 0
+  })
 
   const toggleRowExpansion = (id: string) => {
     const newExpanded = new Set(expandedRows)
@@ -85,30 +121,42 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
         <TableHeader>
           <TableRow>
             <TableHead className="w-[200px]">{t('investments.investor')}</TableHead>
-            <TableHead className="text-right ltr:text-right rtl:text-left">{t('forms.principal_amount')}</TableHead>
+            <TableHead className="text-right ltr:text-right rtl:text-left cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('principal_amount')}>
+              <div className="flex items-center justify-end gap-1">
+                {sortField === 'principal_amount' ? (sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />) : <ArrowUpDown className="h-4 w-4 text-gray-400 opacity-50" />}
+                {t('forms.principal_amount')}
+              </div>
+            </TableHead>
             <TableHead>{t('investments.start_date')}</TableHead>
-            <TableHead>{t('investments.due_date')}</TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('due_date')}>
+              <div className="flex items-center gap-1">
+                {sortField === 'due_date' ? (sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />) : <ArrowUpDown className="h-4 w-4 text-gray-400 opacity-50" />}
+                {t('investments.due_date')}
+              </div>
+            </TableHead>
             <TableHead>{t('investments.category')}</TableHead>
             <TableHead>{t('investments.duration')}</TableHead>
             <TableHead className="text-right ltr:text-right rtl:text-left">{t('investments.profit_pct')}</TableHead>
             <TableHead className="text-right ltr:text-right rtl:text-left">{t('investments.com_pct')}</TableHead>
             <TableHead className="text-right ltr:text-right rtl:text-left">{t('investments.profit_amt')}</TableHead>
             <TableHead className="text-right ltr:text-right rtl:text-left">{t('investments.commission_amt')}</TableHead>
-            <TableHead className="text-right ltr:text-right rtl:text-left">{t('investments.total_payout')}</TableHead>
-            <TableHead>{t('investments.status')}</TableHead>
+            <TableHead className="text-right ltr:text-right rtl:text-left font-semibold">{t('investments.total_payout')}</TableHead>
+                      <TableHead>{t('investments.status')}</TableHead>
             <TableHead>{t('investments.days_remaining')}</TableHead>
+            <TableHead className="text-center">{t('investments.profit_delivered_col')}</TableHead>
             <TableHead className="w-[50px]"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {investments.map((investment) => {
+          {sortedInvestments.map((investment) => {
             const daysRemaining = calculateDaysRemaining(new Date(investment.due_date))
             const progressColor = getDaysRemainingColor(daysRemaining)
             const isExpanded = expandedRows.has(investment.id)
-            
+            const isMaturingSoon = daysRemaining >= 0 && daysRemaining <= 7 && investment.status !== 'matured' && investment.status !== 'renewed' && investment.status !== 'withdrawn'
+
             return (
               <Fragment key={investment.id}>
-                <TableRow className="hover:bg-gray-50">
+                <TableRow className={`hover:bg-gray-50 transition-colors ${isMaturingSoon ? 'bg-amber-50/60' : ''}`}>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <span>{investment.investor_name}</span>
@@ -120,7 +168,7 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
                     </div>
                   </TableCell>
                   <TableCell className="text-right ltr:text-right rtl:text-left font-mono">
-                    {formatCurrency(investment.principal_amount)}
+                    {formatCurrency(investment.principal_amount, currency)}
                   </TableCell>
                   <TableCell>
                     {new Date(investment.starting_date).toLocaleDateString()}
@@ -133,11 +181,11 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
                   </TableCell>
                   <TableCell>
                     {investment.category_id ? (
-                      <Badge 
-                        variant="outline" 
-                        style={{ 
+                      <Badge
+                        variant="outline"
+                        style={{
                           borderColor: categoryConfig[investment.category_id]?.color || '#6B7280',
-                          color: categoryConfig[investment.category_id]?.color || '#6B7280' 
+                          color: categoryConfig[investment.category_id]?.color || '#6B7280'
                         }}
                       >
                         {categoryConfig[investment.category_id]?.label || investment.category_id}
@@ -154,13 +202,13 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
                     {formatPercentage(investment.commission_rate)}
                   </TableCell>
                   <TableCell className="text-right ltr:text-right rtl:text-left font-mono text-emerald-600">
-                    {formatCurrency(investment.profit_amount)}
+                    {formatCurrency(investment.profit_amount, currency)}
                   </TableCell>
                   <TableCell className="text-right ltr:text-right rtl:text-left font-mono text-amber-600">
-                    {formatCurrency(investment.commission_amount)}
+                    {formatCurrency(investment.commission_amount, currency)}
                   </TableCell>
-                  <TableCell className="text-right ltr:text-right rtl:text-left font-mono font-semibold">
-                    {formatCurrency(investment.total_payout)}
+                  <TableCell className="text-right ltr:text-right rtl:text-left font-mono font-semibold text-blue-700">
+                    {formatCurrency(investment.profit_amount + investment.commission_amount, currency)}
                   </TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(investment.status)}>
@@ -175,11 +223,53 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
                       <div className="w-16 bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${progressColor}`}
-                          style={{ 
-                            width: `${Math.max(10, Math.min(100, daysRemaining < 0 ? 100 : (90 - daysRemaining) / 90 * 100))}%` 
+                          style={{
+                            width: `${Math.max(10, Math.min(100, daysRemaining < 0 ? 100 : (90 - daysRemaining) / 90 * 100))}%`
                           }}
                         />
                       </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-center">
+                      <button
+                        disabled={pendingDelivery.has(investment.id)}
+                        onClick={() => {
+                          setPendingDelivery((prev) => new Set(prev).add(investment.id))
+                          startTransition(async () => {
+                            await toggleProfitDelivered(
+                              investment.id,
+                              investment.is_profit_delivered ?? false
+                            )
+                            setPendingDelivery((prev) => {
+                              const next = new Set(prev)
+                              next.delete(investment.id)
+                              return next
+                            })
+                            router.refresh()
+                          })
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 whitespace-nowrap ${
+                          pendingDelivery.has(investment.id)
+                            ? 'bg-slate-100 text-slate-400 cursor-wait'
+                            : investment.is_profit_delivered
+                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                            : 'bg-red-100 text-red-700 hover:bg-red-200'
+                        }`}
+                      >
+                        {pendingDelivery.has(investment.id) ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : investment.is_profit_delivered ? (
+                          <span>✓</span>
+                        ) : (
+                          <span>✗</span>
+                        )}
+                        {pendingDelivery.has(investment.id)
+                          ? '...'
+                          : investment.is_profit_delivered
+                          ? 'تم التسليم'
+                          : 'لم يتم التسليم'}
+                      </button>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -212,10 +302,10 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
                     </div>
                   </TableCell>
                 </TableRow>
-                
+
                 {isExpanded && (
                   <TableRow>
-                    <TableCell colSpan={14} className="bg-gray-50 p-6">
+                    <TableCell colSpan={15} className="bg-gray-50 p-6">
                       <div className="space-y-4">
                         <h4 className="font-semibold text-gray-900">{t('investments.details')}</h4>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -274,7 +364,7 @@ export function InvestmentTable({ investments, onDelete, loading }: InvestmentTa
           })}
         </TableBody>
       </Table>
-      
+
       {loading && (
         <div className="flex items-center justify-center py-16">
           <Loader2 className="h-8 w-8 animate-spin text-blue-500" />

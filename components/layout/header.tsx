@@ -1,8 +1,8 @@
 'use client'
 
-import { Bell, Search, Languages, LogOut, User, CheckCheck, Loader2, Info, AlertTriangle, TrendingUp, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import {
+  Bell, Search, Languages, LogOut, User, CheckCheck, Loader2, Info, AlertTriangle, TrendingUp, X
+} from 'lucide-react'
 import { useLanguage } from '@/lib/i18n/context'
 import { useSearch } from '@/lib/context/search-context'
 import { createClient } from '@/lib/supabase/client'
@@ -21,7 +21,7 @@ interface Notification {
 const notifIcon = (type: string) => {
   if (type === 'warning' || type === 'overdue') return <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0" />
   if (type === 'investment' || type === 'maturity') return <TrendingUp className="h-4 w-4 text-blue-500 flex-shrink-0" />
-  return <Info className="h-4 w-4 text-gray-400 flex-shrink-0" />
+  return <Info className="h-4 w-4 text-slate-400 flex-shrink-0" />
 }
 
 const formatRelative = (dateStr: string) => {
@@ -89,12 +89,8 @@ export function Header() {
 
   const toggleLanguage = () => setLocale(locale === 'en' ? 'ar' : 'en')
 
-  // Clear search when navigating away
-  useEffect(() => {
-    clearSearch()
-  }, [pathname, clearSearch])
+  useEffect(() => { clearSearch() }, [pathname, clearSearch])
 
-  // Open notif panel and fetch fresh data
   const handleNotifToggle = () => {
     const opening = !notifOpen
     setNotifOpen(opening)
@@ -102,7 +98,6 @@ export function Header() {
     if (opening) fetchNotifications()
   }
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false)
@@ -113,21 +108,22 @@ export function Header() {
   }, [])
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 relative z-40">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
+    <header className="h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-6 relative z-40 shadow-[0_1px_20px_-5px_rgba(0,0,0,0.06)]">
+
+      {/* ── Search ────────────────────────────────────────────── */}
+      <div className="flex-1 max-w-sm">
         <div className="relative">
-          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
+          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <input
             placeholder={t('header.search_placeholder')}
-            className="ps-10 pe-8 bg-gray-50 border-gray-200 focus:bg-white"
+            className="w-full ps-10 pe-9 py-2 text-sm bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
             <button
               onClick={clearSearch}
-              className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute end-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="مسح البحث"
             >
               <X className="h-3.5 w-3.5" />
@@ -136,79 +132,77 @@ export function Header() {
         </div>
       </div>
 
-      {/* Actions */}
+      {/* ── Actions ───────────────────────────────────────────── */}
       <div className="flex items-center gap-1">
-        {/* Language Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
+        {/* Language toggle */}
+        <button
           onClick={toggleLanguage}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all"
         >
           <Languages className="h-4 w-4" />
-          <span className="text-xs font-semibold">{locale === 'en' ? 'العربية' : 'English'}</span>
-        </Button>
+          <span className="text-xs">{locale === 'en' ? 'العربية' : 'English'}</span>
+        </button>
+
+        {/* Divider */}
+        <div className="h-6 w-px bg-slate-200 mx-1" />
 
         {/* ── Notifications ── */}
         <div className="relative" ref={notifRef}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative"
+          <button
+            className="relative h-9 w-9 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-all"
             onClick={handleNotifToggle}
             aria-label="الإشعارات"
           >
-            <Bell className="h-5 w-5 text-gray-600" />
+            <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -end-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+              <span className="absolute -top-0.5 -end-0.5 h-4 w-4 bg-red-500 rounded-full text-[9px] text-white flex items-center justify-center font-bold shadow-sm">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
-          </Button>
+          </button>
 
           {notifOpen && (
-            <div className="absolute end-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="absolute end-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden z-50">
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
-                <span className="font-semibold text-sm text-gray-900">الإشعارات</span>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/70">
+                <span className="font-semibold text-sm text-slate-800">الإشعارات</span>
                 {notifications.length > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
                   >
                     <CheckCheck className="h-3 w-3" />
                     تحديد الكل كمقروء
                   </button>
                 )}
               </div>
-
               {/* Body */}
               <div className="max-h-80 overflow-y-auto">
                 {notifLoading ? (
                   <div className="flex items-center justify-center py-10">
-                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                    <Loader2 className="h-5 w-5 animate-spin text-slate-300" />
                   </div>
                 ) : notifications.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 text-gray-400">
-                    <Bell className="h-8 w-8 mb-2 text-gray-200" />
+                  <div className="flex flex-col items-center justify-center py-10 text-slate-400">
+                    <Bell className="h-8 w-8 mb-2 text-slate-200" />
                     <p className="text-sm">لا توجد إشعارات جديدة</p>
                   </div>
                 ) : (
                   notifications.map((n) => (
                     <div
                       key={n.id}
-                      className="flex gap-3 px-4 py-3 border-b border-gray-50 hover:bg-blue-50/40 transition-colors"
+                      className="flex gap-3 px-4 py-3 border-b border-slate-50 hover:bg-blue-50/40 transition-colors last:border-0"
                     >
                       <div className="mt-0.5">{notifIcon(n.type)}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{n.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
-                        <p className="text-[10px] text-gray-400 mt-1">{formatRelative(n.created_at)}</p>
+                        <p className="text-sm font-semibold text-slate-900 truncate">{n.title}</p>
+                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{n.message}</p>
+                        <p className="text-[10px] text-slate-400 mt-1">{formatRelative(n.created_at)}</p>
                       </div>
                       <button
                         onClick={() => markAsRead(n.id)}
                         disabled={markingId === n.id}
-                        className="flex-shrink-0 mt-0.5 text-gray-300 hover:text-blue-500 transition-colors"
+                        className="flex-shrink-0 mt-0.5 text-slate-300 hover:text-blue-500 transition-colors"
                         title="تحديد كمقروء"
                       >
                         {markingId === n.id
@@ -225,19 +219,17 @@ export function Header() {
 
         {/* ── Profile / Sign-out ── */}
         <div className="relative" ref={profileRef}>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative"
+          <button
+            className="h-9 w-9 flex items-center justify-center rounded-full hover:ring-2 hover:ring-blue-500/30 transition-all"
             onClick={() => { setProfileOpen((p) => !p); setNotifOpen(false) }}
           >
-            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
               <User className="h-4 w-4 text-white" />
             </div>
-          </Button>
+          </button>
 
           {profileOpen && (
-            <div className="absolute end-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="absolute end-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl shadow-slate-200 border border-slate-100 overflow-hidden z-50">
               <button
                 onClick={handleSignOut}
                 disabled={signingOut}

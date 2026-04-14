@@ -33,7 +33,7 @@ interface Debt {
   issue_date: string
   due_date?: string | null
   debt_type: string
-  status: 'pending' | 'partial' | 'paid' | 'defaulted'
+  status: 'pending' | 'partial' | 'paid' | 'defaulted' | 'forgiven'
   amount_paid: number
   remaining_amount: number
   notes?: string
@@ -46,6 +46,7 @@ interface DebtTableProps {
   onEdit?: (debt: Debt) => void
   onDelete?: (debtId: string) => void
   loading?: boolean
+  currency?: string
 }
 
 const statusStyles: Record<string, string> = {
@@ -62,7 +63,7 @@ const typeStyles: Record<string, string> = {
   loan: 'bg-orange-100 text-orange-800',
 }
 
-export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading }: DebtTableProps) {
+export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading, currency = 'SAR' }: DebtTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const { t } = useLanguage()
 
@@ -152,13 +153,13 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading }:
                     <TableCell className="font-medium">{debt.creditor_name}</TableCell>
                     <TableCell>{debt.debtor_name}</TableCell>
                     <TableCell className="text-right ltr:text-right rtl:text-left font-mono">
-                      {formatCurrency(debt.principal_amount)}
+                      {formatCurrency(debt.principal_amount, currency)}
                     </TableCell>
                     <TableCell className="text-right ltr:text-right rtl:text-left font-mono">
                       {debt.interest_rate ? `${(debt.interest_rate * 100).toFixed(1)}%` : t('debts.na')}
                     </TableCell>
                     <TableCell className="text-right ltr:text-right rtl:text-left font-mono font-semibold">
-                      {formatCurrency(debt.total_due)}
+                      {formatCurrency(debt.total_due, currency)}
                     </TableCell>
                     <TableCell>
                       {debt.due_date ? (
@@ -185,10 +186,10 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading }:
                       <Badge className={statusStyles[debt.status] || statusStyles.pending}>{getStatusLabel(debt.status)}</Badge>
                     </TableCell>
                     <TableCell className="text-right ltr:text-right rtl:text-left font-mono text-green-600">
-                      {formatCurrency(debt.amount_paid)}
+                      {formatCurrency(debt.amount_paid, currency)}
                     </TableCell>
                     <TableCell className="text-right ltr:text-right rtl:text-left font-mono text-red-600">
-                      {formatCurrency(debt.remaining_amount)}
+                      {formatCurrency(debt.remaining_amount, currency)}
                     </TableCell>
                     <TableCell>
                       <div className="w-20">
@@ -263,7 +264,7 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading }:
                             <div key={payment.id} className="grid grid-cols-4 gap-4 text-sm py-2 border-b border-gray-100">
                               <span>{new Date(payment.payment_date).toLocaleDateString()}</span>
                               <span className="font-mono text-green-600">
-                                {formatCurrency(payment.amount)}
+                                {formatCurrency(payment.amount, currency)}
                               </span>
                               <span className="text-gray-600">{payment.payment_method || t('debts.na')}</span>
                               <span className="text-gray-500 truncate">{payment.notes || '-'}</span>
