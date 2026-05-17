@@ -40,3 +40,5 @@ stitch/
 docs/
 Translation\ Dictionary.json
 *.sql                      # Apply migrations via Supabase dashboard, not git
+*.rar
+*.zip
