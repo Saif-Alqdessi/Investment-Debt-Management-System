@@ -24,7 +24,7 @@ jobs:
             --request GET \
             --header "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             --header "Content-Type: application/json" \
-            "https://musical-cassata-f4217a.netlify.app/api/cron/alerts")
+            "https://rareb-investments.netlify.app/api/cron/alerts")
 
           echo "HTTP Status: $HTTP_STATUS"
           echo "Response body:"
