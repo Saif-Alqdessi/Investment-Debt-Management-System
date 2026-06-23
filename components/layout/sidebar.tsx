@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n/context'
 import { createClient } from '@/lib/supabase/client'
+import { BRANDING } from '@/lib/config/branding'
 
 const navItems = [
   { key: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -68,14 +69,23 @@ export function Sidebar() {
   return (
     <div className="flex h-full w-64 flex-col bg-slate-950 border-e border-slate-800/50 shadow-2xl">
 
-      {/* ── Logo ────────────────────────────────────────────────────────── */}
+      {/* ── Logo ────────────────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800/50">
-        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 flex-shrink-0">
-          <span className="text-white font-bold text-sm tracking-wider">R</span>
-        </div>
+        {BRANDING.logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={BRANDING.logoUrl}
+            alt={`${BRANDING.appName} logo`}
+            className="w-10 h-10 rounded-xl object-contain flex-shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-600/30 flex-shrink-0">
+            <span className="text-white font-bold text-sm tracking-wider">{BRANDING.logoInitial}</span>
+          </div>
+        )}
         <div>
-          <h1 className="text-base font-bold text-white tracking-tight leading-none">Rareb Fintech</h1>
-          <p className="text-[10px] text-slate-500 mt-0.5">Wealth Management</p>
+          <h1 className="text-base font-bold text-white tracking-tight leading-none">{BRANDING.appName}</h1>
+          <p className="text-[10px] text-slate-500 mt-0.5">{BRANDING.tagline}</p>
         </div>
       </div>
 
@@ -93,7 +103,7 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 active:scale-[0.98]',
                 isActive
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                  ? 'bg-brand-600 text-white shadow-md shadow-brand-600/25'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/70'
               )}
             >
@@ -113,7 +123,7 @@ export function Sidebar() {
       <div className="border-t border-slate-800/50 px-3 py-4 space-y-1">
         {/* User info row */}
         <div className="flex items-center gap-3 px-4 py-2">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
             <span className="text-xs font-bold text-white">{initial}</span>
           </div>
           <div className="flex-1 min-w-0">

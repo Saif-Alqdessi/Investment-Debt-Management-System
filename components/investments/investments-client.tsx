@@ -10,6 +10,7 @@ import { useLanguage } from '@/lib/i18n/context'
 import { useSearch } from '@/lib/context/search-context'
 import { deleteInvestment } from '@/app/dashboard/investments/actions'
 import { exportInvestmentsToExcel } from '@/lib/export'
+import { useRole } from '@/lib/context/role-context'
 
 interface Investment {
   id: string
@@ -41,6 +42,7 @@ export function InvestmentsClient({ investments, currency = 'SAR' }: Investments
   const [isPending, startTransition] = useTransition()
   const { t } = useLanguage()
   const router = useRouter()
+  const { isViewer } = useRole()
 
   const filteredInvestments = investments.filter(investment => {
     const q = searchQuery.toLowerCase()
@@ -78,7 +80,7 @@ export function InvestmentsClient({ investments, currency = 'SAR' }: Investments
       {/* ── Bento Stats ─── */}
       <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-slate-100">
         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
-          <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Activity className="h-4 w-4" /></div>
+          <div className="p-2 bg-brand-100 text-brand-600 rounded-lg"><Activity className="h-4 w-4" /></div>
           <div>
             <div className="text-2xl font-extrabold tabular-nums text-slate-900">{totalStats.totalInvestments}</div>
             <p className="text-xs font-medium text-slate-500">{t('investments.total_investments')}</p>
@@ -92,7 +94,7 @@ export function InvestmentsClient({ investments, currency = 'SAR' }: Investments
           </div>
         </div>
         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
-          <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Wallet className="h-4 w-4" /></div>
+          <div className="p-2 bg-brand-100 text-brand-600 rounded-lg"><Wallet className="h-4 w-4" /></div>
           <div>
             <div className="text-xl font-extrabold tabular-nums text-slate-900">{formatCurrency(totalStats.totalValue, currency)}</div>
             <p className="text-xs font-medium text-slate-500">{t('investments.total_value')}</p>
@@ -146,7 +148,7 @@ export function InvestmentsClient({ investments, currency = 'SAR' }: Investments
                   onClick={() => setStatusFilter(filter)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     statusFilter === filter
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-white text-brand-600 shadow-sm'
                       : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
@@ -159,7 +161,7 @@ export function InvestmentsClient({ investments, currency = 'SAR' }: Investments
 
         <InvestmentTable
           investments={filteredInvestments.map(i => ({ ...i, notes: i.notes ?? undefined }))}
-          onDelete={isPending ? undefined : handleDelete}
+          onDelete={isPending || isViewer ? undefined : handleDelete}
           currency={currency}
         />
       </div>

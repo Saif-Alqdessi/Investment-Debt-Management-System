@@ -61,7 +61,7 @@ export default function EditInvestmentPage() {
     return (
       <div className="flex items-center justify-center py-32">
         <div className="text-center">
-          <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="h-8 w-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-500">جاري تحميل بيانات الاستثمار…</p>
         </div>
       </div>

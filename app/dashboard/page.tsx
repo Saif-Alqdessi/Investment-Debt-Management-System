@@ -24,7 +24,7 @@ type Debt       = Database['public']['Tables']['debts']['Row']
 // ── Status map ────────────────────────────────────────────────────────────────
 const statusBadgeClass: Record<string, string> = {
   active:    'bg-emerald-100 text-emerald-700',
-  matured:   'bg-blue-100 text-blue-700',
+  matured:   'bg-brand-100 text-brand-700',
   renewed:   'bg-purple-100 text-purple-700',
   withdrawn: 'bg-slate-100 text-slate-500',
 }
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
           <p className="text-slate-500 mt-1 text-sm">نظرة عامة على أدائك المالي اليوم.</p>
         </div>
         <Link href="/dashboard/investments/new">
-          <button className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-blue-600/25 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all">
+          <button className="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-brand-600/25 hover:bg-brand-700 hover:scale-[1.02] active:scale-95 transition-all">
             <Plus className="h-4 w-4" />
             استثمار جديد
           </button>
@@ -99,10 +99,10 @@ export default async function DashboardPage() {
         {/* Card 1: Portfolio Value */}
         <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all">
           <div className="flex items-center justify-between mb-5">
-            <div className="w-11 h-11 bg-blue-50 rounded-2xl flex items-center justify-center">
-              <Wallet className="h-5 w-5 text-blue-600" />
+            <div className="w-11 h-11 bg-brand-50 rounded-2xl flex items-center justify-center">
+              <Wallet className="h-5 w-5 text-brand-600" />
             </div>
-            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full tabular-nums">
+            <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full tabular-nums">
               +{activeInvestments.length} نشط
             </span>
           </div>
@@ -165,7 +165,7 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold text-slate-900">استثمارات تقترب من الاستحقاق</h2>
             <Link href="/dashboard/investments">
-              <span className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer transition-colors">
+              <span className="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline cursor-pointer transition-colors">
                 عرض الكل
               </span>
             </Link>
@@ -234,7 +234,7 @@ export default async function DashboardPage() {
                           +{formatCurrency(investment.profit_amount, currency)} ربح
                         </p>
                         <Link href={`/dashboard/investments/${investment.id}`}>
-                          <button className="mt-2 text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                          <button className="mt-2 text-xs font-semibold text-brand-600 bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition-colors">
                             عرض التفاصيل
                           </button>
                         </Link>
@@ -274,7 +274,7 @@ export default async function DashboardPage() {
               </div>
               <p className="text-sm font-medium text-slate-500 text-center">لا توجد استثمارات حالياً</p>
               <Link href="/dashboard/investments/new">
-                <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-sm rounded-xl">
+                <Button className="mt-4 bg-brand-600 hover:bg-brand-700 text-sm rounded-xl">
                   <Plus className="me-2 h-4 w-4" />
                   استثمار جديد
                 </Button>
@@ -286,8 +286,8 @@ export default async function DashboardPage() {
               {recentInvestments.map((investment) => (
                 <div key={investment.id} className="relative flex gap-5">
                   {/* Timeline node */}
-                  <div className="relative z-10 w-12 h-12 rounded-full bg-blue-50 border-4 border-white shadow-sm flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                  <div className="relative z-10 w-12 h-12 rounded-full bg-brand-50 border-4 border-white shadow-sm flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="h-4 w-4 text-brand-600" />
                   </div>
 
                   {/* Content */}
@@ -313,7 +313,7 @@ export default async function DashboardPage() {
                         </p>
                       </div>
                       <Link href={`/dashboard/investments/${investment.id}`}>
-                        <button className="text-[10px] font-bold text-blue-600 border border-blue-200 px-2.5 py-1 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-0.5">
+                        <button className="text-[10px] font-bold text-brand-600 border border-brand-200 px-2.5 py-1 rounded-lg hover:bg-brand-50 transition-colors flex items-center gap-0.5">
                           التفاصيل <ChevronRight className="h-3 w-3" />
                         </button>
                       </Link>

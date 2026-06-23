@@ -87,7 +87,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
       </div>
     )
   }
@@ -110,7 +110,7 @@ export default function SettingsPage() {
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-bold flex items-center gap-2 text-slate-900">
-                <User className="h-5 w-5 text-blue-600" />
+                <User className="h-5 w-5 text-brand-600" />
                 الملف الشخصي
               </h3>
             </div>
@@ -118,7 +118,7 @@ export default function SettingsPage() {
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* Avatar */}
               <div className="relative group shrink-0">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center border-2 border-slate-200 overflow-hidden">
+                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center border-2 border-slate-200 overflow-hidden">
                   <User className="h-10 w-10 text-white" />
                 </div>
               </div>
@@ -128,7 +128,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700">الاسم الكامل</label>
                   <input
-                    className="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
+                    className="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-500/20 focus:bg-white transition-all outline-none"
                     type="text"
                     placeholder="أدخل اسمك الكامل"
                     value={displayName}
@@ -140,7 +140,7 @@ export default function SettingsPage() {
                   <label className="text-sm font-semibold text-slate-700">رقم الهاتف</label>
                   <div className="relative">
                     <input
-                      className="tabular-nums w-full bg-slate-50 border-0 rounded-xl ps-12 pe-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none"
+                      className="tabular-nums w-full bg-slate-50 border-0 rounded-xl ps-12 pe-4 py-3 text-sm focus:ring-2 focus:ring-brand-500/20 focus:bg-white transition-all outline-none"
                       dir="ltr"
                       type="text"
                       placeholder="+966 50 000 0000"
@@ -167,7 +167,7 @@ export default function SettingsPage() {
           {/* Platform Preferences */}
           <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
             <h3 className="text-xl font-bold flex items-center gap-2 mb-6 text-slate-900">
-              <Settings2 className="h-5 w-5 text-blue-600" />
+              <Settings2 className="h-5 w-5 text-brand-600" />
               تفضيلات المنصة
             </h3>
             <div className="space-y-6">
@@ -201,7 +201,7 @@ export default function SettingsPage() {
                       onClick={() => setCurrency(code)}
                       className={`flex-1 py-2.5 rounded-xl text-sm font-bold tabular-nums transition-all ${
                         currency === code
-                          ? 'bg-blue-600 text-white shadow-sm'
+                          ? 'bg-brand-600 text-white shadow-sm'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
@@ -259,7 +259,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-10 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
+            className="flex items-center gap-2 px-10 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
           >
             {saving
               ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري الحفظ...</>

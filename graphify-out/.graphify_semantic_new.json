@@ -1,0 +1,1050 @@
+{
+  "nodes": [
+    {
+      "id": "workflows_daily_alerts_daily_maturity_alerts",
+      "label": "Daily Maturity Alerts Workflow",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "workflows_daily_alerts_send_alerts_job",
+      "label": "send-alerts Job",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "workflows_daily_alerts_cron_alert_endpoint",
+      "label": "Cron Alert Endpoint (GET /api/cron/alerts)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 27",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "workflows_daily_alerts_cron_secret",
+      "label": "CRON_SECRET GitHub Secret",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "workflows_daily_alerts_netlify_deployment",
+      "label": "Netlify Deployment (rareb-investments.netlify.app)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 27",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "label": "Rareb Investment & Debt Management Platform",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_supabase_auth",
+      "label": "Supabase Auth (email/password, cookie SSR)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 28",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_tenancy_model",
+      "label": "Tenancy Model (per-user isolation via user_id)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_rls_policies",
+      "label": "Row Level Security Policies (auth.uid() = user_id)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 29",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_profiles_role",
+      "label": "profiles.role Enum (owner|admin|viewer)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 30",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_investment_categories_global",
+      "label": "investment_categories (Global Shared Table - Data Leak Risk)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 31",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "investment_categories is not scoped to any tenant (no user_id, no org_id). This is a data-isolation bug disguised as a feature — the day a second tenant signs up, both see/edit the same rows. Must be migrated to per-org in Step 1 of commercialization."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_cron_layer",
+      "label": "Cron Alert Layer (GitHub Action + /api/cron/alerts + Gmail SMTP)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 32",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_audit_log",
+      "label": "audit_log Table (No RLS, Appears Unwritten)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 36",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "audit_log table exists but has no RLS policies and no evidence it is being written to in any server actions. For a B2B finance product, an enforced tenant-scoped audit log is a compliance selling feature, not an afterthought. Should be wired in Step 1 RLS sweep."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "label": "Model A — Shared Multi-Tenant SaaS (Recommended)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 48",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Recommended as starting point due to lowest marginal cost per customer. Schema work (org_id isolation) is unavoidable for any serious B2B play regardless of model chosen. Isolation shifts from user_id to org_id via RLS."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_model_b_white_label",
+      "label": "Model B — White-Label Dedicated Deployment",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 54",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Each customer gets their own Supabase project + Netlify site. Operational cost grows linearly with customer count. Suited for regulated enterprise clients (banks, government finance offices) needing data sovereignty. Deferred until a paying customer demands it."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_model_c_hybrid",
+      "label": "Model C — Hybrid (Shared Core + Dedicated Tier)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 60",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Build Model A first, architect so exact same codebase can be deployed as single-tenant for enterprise. Strategy most successful B2B SaaS converge on (GitLab, Sentry, Supabase). Defer Model B cost until a paying customer demands it."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_model_d_source_license",
+      "label": "Model D — Source License / Self-Hosted",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 66",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Niche but powerful in the GCC/regional market where banks and family offices demand on-prem. Lowest infra cost; highest support cost. Only worth pursuing once brand traction exists."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_organizations_table",
+      "label": "organizations Table (New - Tenant Boundary)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 79",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_org_memberships_table",
+      "label": "org_memberships Join Table (user_id, org_id, role)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 80",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_current_org_ids_fn",
+      "label": "current_org_ids() SQL Helper Function",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 82",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Define once as a SQL function so every RLS policy calls it — described as the single highest-leverage change in the whole project. Replaces per-policy auth.uid() = user_id checks."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_require_role_guard",
+      "label": "requireRole() Server-Side Guard",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 86",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_stripe_billing",
+      "label": "Stripe Billing Integration (Checkout + Customer Portal + subscriptions table)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 91",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_transactional_email_provider",
+      "label": "Transactional Email Provider (Resend/Postmark) per-tenant sender domains",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 90",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "rationale": "Gmail App Passwords will throttle at scale with many tenants. Moving to Resend/Postmark with per-tenant sender domains improves deliverability and enables per-org branding of notification emails."
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_signup_onboarding_flow",
+      "label": "Signup + Onboarding Flow (/signup page)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 88",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "commercialization_roadmap_glm_5_2_invitation_flow",
+      "label": "Invitation Flow (/invite email magic link)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 89",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_rareb_investment_debt_system",
+      "label": "Rareb — Investment & Debt Management System",
+      "file_type": "document",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_nextjs14_framework",
+      "label": "Next.js 14 (App Router, Server Actions, Server Components)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 34",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_supabase_backend",
+      "label": "Supabase (PostgreSQL 15, GoTrue Auth, Row Level Security)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 36",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_middleware_auth_guard",
+      "label": "middleware.ts (Auth Guard — redirects unauthenticated users)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 226",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_investments_actions",
+      "label": "investments/actions.ts (Server Actions CRUD + transactions)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 181",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_debts_actions",
+      "label": "debts/actions.ts (Server Actions CRUD + payments)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 185",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_supabase_client",
+      "label": "lib/supabase/client.ts (Browser Supabase Client)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 211",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_supabase_server",
+      "label": "lib/supabase/server.ts (Server Supabase Client)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 212",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_i18n_context",
+      "label": "lib/i18n/context.tsx (LanguageProvider + useLanguage hook)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 214",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_search_context",
+      "label": "lib/context/search-context.tsx (Global Search State)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 217",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_validations",
+      "label": "lib/validations.ts (Zod Schemas: investmentSchema, debtSchema)",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 220",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_migration_001_fix_schema",
+      "label": "supabase/migrations/001_fix_schema.sql",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 97",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_row_level_security",
+      "label": "Row Level Security (created_by = auth.uid())",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 150",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_investment_tracking",
+      "label": "Investment Tracking Feature (ROI, commission, payout, duration types)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_debt_management",
+      "label": "Debt Management Feature (creditor/debtor, interest, partial payments)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_notification_center",
+      "label": "Notification Center (unread alerts, bell menu)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 15",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_dual_language_i18n",
+      "label": "Dual Language AR/EN with RTL Support",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 17",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "readme_excel_export",
+      "label": "Excel Export (xlsx / SheetJS library)",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 19",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "workflows_daily_alerts_send_alerts_job",
+      "target": "workflows_daily_alerts_cron_alert_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 17-27",
+      "weight": 1.0
+    },
+    {
+      "source": "workflows_daily_alerts_send_alerts_job",
+      "target": "workflows_daily_alerts_cron_secret",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 25",
+      "weight": 1.0
+    },
+    {
+      "source": "workflows_daily_alerts_daily_maturity_alerts",
+      "target": "workflows_daily_alerts_send_alerts_job",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 10-11",
+      "weight": 1.0
+    },
+    {
+      "source": "workflows_daily_alerts_send_alerts_job",
+      "target": "workflows_daily_alerts_netlify_deployment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 27",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_cron_layer",
+      "target": "workflows_daily_alerts_daily_maturity_alerts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 32",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_cron_layer",
+      "target": "workflows_daily_alerts_cron_alert_endpoint",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 32",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "target": "commercialization_roadmap_glm_5_2_supabase_auth",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 28",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "target": "commercialization_roadmap_glm_5_2_tenancy_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 29",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_tenancy_model",
+      "target": "commercialization_roadmap_glm_5_2_rls_policies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 29",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "target": "commercialization_roadmap_glm_5_2_investment_categories_global",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 31",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "target": "commercialization_roadmap_glm_5_2_audit_log",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 36",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_organizations_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 79",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_org_memberships_table",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 80",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_current_org_ids_fn",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 82",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_require_role_guard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 86",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_signup_onboarding_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 88",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_invitation_flow",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 89",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_stripe_billing",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 91",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_transactional_email_provider",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 90",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_c_hybrid",
+      "target": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 62",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_c_hybrid",
+      "target": "commercialization_roadmap_glm_5_2_model_b_white_label",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 62",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_current_org_ids_fn",
+      "target": "commercialization_roadmap_glm_5_2_rls_policies",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 82",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_org_memberships_table",
+      "target": "commercialization_roadmap_glm_5_2_profiles_role",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 80",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_nextjs14_framework",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 34",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_supabase_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 36",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_migration_001_fix_schema",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 97",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_row_level_security",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 150",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_middleware_auth_guard",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 226",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_investments_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 181",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_debts_actions",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 185",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_dual_language_i18n",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 17",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_excel_export",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 19",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_rareb_investment_debt_system",
+      "target": "readme_notification_center",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 15",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_migration_001_fix_schema",
+      "target": "readme_row_level_security",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 105",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_middleware_auth_guard",
+      "target": "readme_supabase_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 250",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_investments_actions",
+      "target": "readme_validations",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 181",
+      "weight": 0.85
+    },
+    {
+      "source": "readme_debts_actions",
+      "target": "readme_validations",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 185",
+      "weight": 0.85
+    },
+    {
+      "source": "readme_supabase_client",
+      "target": "readme_supabase_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 211",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_supabase_server",
+      "target": "readme_supabase_backend",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 212",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_i18n_context",
+      "target": "readme_dual_language_i18n",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 214",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_search_context",
+      "target": "readme_rareb_investment_debt_system",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\README.md",
+      "source_location": "line 217",
+      "weight": 0.85
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rareb_platform",
+      "target": "readme_rareb_investment_debt_system",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 24",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_rls_policies",
+      "target": "readme_row_level_security",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 29",
+      "weight": 0.95
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_supabase_auth",
+      "target": "readme_supabase_backend",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 28",
+      "weight": 0.95
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_cron_layer",
+      "target": "readme_notification_center",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 32",
+      "weight": 0.75
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_transactional_email_provider",
+      "target": "commercialization_roadmap_glm_5_2_cron_layer",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 90",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_investment_categories_global",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 81",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_model_a_shared_saas",
+      "target": "commercialization_roadmap_glm_5_2_audit_log",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 93",
+      "weight": 1.0
+    },
+    {
+      "source": "commercialization_roadmap_glm_5_2_organizations_table",
+      "target": "commercialization_roadmap_glm_5_2_tenancy_model",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 40",
+      "weight": 0.95
+    },
+    {
+      "source": "workflows_daily_alerts_daily_maturity_alerts",
+      "target": "commercialization_roadmap_glm_5_2_cron_layer",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml",
+      "source_location": "line 1",
+      "weight": 0.95
+    },
+    {
+      "source": "readme_investments_actions",
+      "target": "commercialization_roadmap_glm_5_2_require_role_guard",
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.2,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 163",
+      "weight": 0.2
+    },
+    {
+      "source": "readme_debts_actions",
+      "target": "commercialization_roadmap_glm_5_2_require_role_guard",
+      "relation": "conceptually_related_to",
+      "confidence": "AMBIGUOUS",
+      "confidence_score": 0.2,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md",
+      "source_location": "line 163",
+      "weight": 0.2
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "b2b_commercialization_core_triad",
+      "label": "B2B Commercialization Core: Org Isolation + Role Enforcement + Billing",
+      "nodes": [
+        "commercialization_roadmap_glm_5_2_organizations_table",
+        "commercialization_roadmap_glm_5_2_require_role_guard",
+        "commercialization_roadmap_glm_5_2_stripe_billing"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md"
+    },
+    {
+      "id": "cron_alert_delivery_pipeline",
+      "label": "Cron Alert Delivery Pipeline: GitHub Action → API Endpoint → Notifications",
+      "nodes": [
+        "workflows_daily_alerts_daily_maturity_alerts",
+        "workflows_daily_alerts_cron_alert_endpoint",
+        "readme_notification_center"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\.github\\workflows\\daily-alerts.yml"
+    },
+    {
+      "id": "rls_multitenancy_isolation_group",
+      "label": "RLS Multi-Tenancy Isolation Group: RLS Policies + current_org_ids() + org_memberships",
+      "nodes": [
+        "commercialization_roadmap_glm_5_2_rls_policies",
+        "commercialization_roadmap_glm_5_2_current_org_ids_fn",
+        "commercialization_roadmap_glm_5_2_org_memberships_table"
+      ],
+      "relation": "implement",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "C:\\Users\\Admin\\Desktop\\rareb\\COMMERCIALIZATION_ROADMAP(GLM 5.2).md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -20,7 +20,7 @@ interface Notification {
 
 const notifIcon = (type: string) => {
   if (type === 'warning' || type === 'overdue') return <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0" />
-  if (type === 'investment' || type === 'maturity') return <TrendingUp className="h-4 w-4 text-blue-500 flex-shrink-0" />
+  if (type === 'investment' || type === 'maturity') return <TrendingUp className="h-4 w-4 text-brand-500 flex-shrink-0" />
   return <Info className="h-4 w-4 text-slate-400 flex-shrink-0" />
 }
 
@@ -116,7 +116,7 @@ export function Header() {
           <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             placeholder={t('header.search_placeholder')}
-            className="w-full ps-10 pe-9 py-2 text-sm bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all"
+            className="w-full ps-10 pe-9 py-2 text-sm bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 focus:bg-white transition-all"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -169,7 +169,7 @@ export function Header() {
                 {notifications.length > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium"
+                    className="text-xs text-brand-600 hover:text-brand-800 flex items-center gap-1 font-medium"
                   >
                     <CheckCheck className="h-3 w-3" />
                     تحديد الكل كمقروء
@@ -191,7 +191,7 @@ export function Header() {
                   notifications.map((n) => (
                     <div
                       key={n.id}
-                      className="flex gap-3 px-4 py-3 border-b border-slate-50 hover:bg-blue-50/40 transition-colors last:border-0"
+                      className="flex gap-3 px-4 py-3 border-b border-slate-50 hover:bg-brand-50/40 transition-colors last:border-0"
                     >
                       <div className="mt-0.5">{notifIcon(n.type)}</div>
                       <div className="flex-1 min-w-0">
@@ -202,7 +202,7 @@ export function Header() {
                       <button
                         onClick={() => markAsRead(n.id)}
                         disabled={markingId === n.id}
-                        className="flex-shrink-0 mt-0.5 text-slate-300 hover:text-blue-500 transition-colors"
+                        className="flex-shrink-0 mt-0.5 text-slate-300 hover:text-brand-500 transition-colors"
                         title="تحديد كمقروء"
                       >
                         {markingId === n.id
@@ -220,10 +220,10 @@ export function Header() {
         {/* ── Profile / Sign-out ── */}
         <div className="relative" ref={profileRef}>
           <button
-            className="h-9 w-9 flex items-center justify-center rounded-full hover:ring-2 hover:ring-blue-500/30 transition-all"
+            className="h-9 w-9 flex items-center justify-center rounded-full hover:ring-2 hover:ring-brand-500/30 transition-all"
             onClick={() => { setProfileOpen((p) => !p); setNotifOpen(false) }}
           >
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center shadow-sm">
               <User className="h-4 w-4 text-white" />
             </div>
           </button>

@@ -3,6 +3,8 @@
 import { createClient } from '@/lib/supabase/server'
 import nodemailer from 'nodemailer'
 import { getProfile } from '@/app/dashboard/settings/actions'
+import { BRANDING } from '@/lib/config/branding'
+import { requireRole } from '@/lib/auth/roles'
 
 // ── Nodemailer transporter (Gmail SMTP, port 465, SSL) ───────────────────────
 const transporter = nodemailer.createTransport({
@@ -79,7 +81,7 @@ function buildEmailHtml(investments: MaturingInvestment[], generatedAt: string, 
           <tr>
             <td style="background:linear-gradient(135deg,#1e40af,#3b82f6);padding:32px 40px;">
               <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;">⚠️ تنبيه استحقاق الاستثمارات</h1>
-              <p style="margin:8px 0 0;color:#bfdbfe;font-size:14px;">منصة Rareb للاستثمارات · ${generatedAt}</p>
+              <p style="margin:8px 0 0;color:#bfdbfe;font-size:14px;">منصة ${BRANDING.appName} للاستثمارات · ${generatedAt}</p>
             </td>
           </tr>
 
@@ -117,7 +119,7 @@ function buildEmailHtml(investments: MaturingInvestment[], generatedAt: string, 
           <tr>
             <td style="padding:0 40px 32px;text-align:center;">
               <a href="${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/dashboard/investments"
-                 style="display:inline-block;background:#2563eb;color:#ffffff;font-weight:700;font-size:14px;padding:14px 36px;border-radius:12px;text-decoration:none;">
+                 style="display:inline-block;background:${BRANDING.primaryColor};color:#ffffff;font-weight:700;font-size:14px;padding:14px 36px;border-radius:12px;text-decoration:none;">
                 فتح لوحة التحكم
               </a>
             </td>
@@ -127,7 +129,7 @@ function buildEmailHtml(investments: MaturingInvestment[], generatedAt: string, 
           <tr>
             <td style="padding:20px 40px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0;font-size:12px;color:#94a3b8;">
-                هذا البريد تم إرساله تلقائياً من منصة Rareb للاستثمارات. يُرجى عدم الرد عليه.
+                هذا البريد تم إرساله تلقائياً من منصة ${BRANDING.appName} للاستثمارات. يُرجى عدم الرد عليه.
               </p>
             </td>
           </tr>
@@ -151,6 +153,7 @@ export async function sendMaturityAlerts(targetEmail: string) {
   }
 
   try {
+    await requireRole('admin')
     // Fetch user's preferred currency for email formatting
     const profileResult = await getProfile()
     const currency = profileResult.success && profileResult.data
@@ -197,7 +200,7 @@ export async function sendMaturityAlerts(targetEmail: string) {
 
     // Send via Gmail SMTP (nodemailer)
     await transporter.sendMail({
-      from: `"Rareb Investments" <${process.env.EMAIL_USER}>`,
+      from: `"${BRANDING.emailFromName}" <${process.env.EMAIL_USER}>`,
       to: targetEmail,
       subject: `⚠️ تنبيه: ${investments.length} استثمار يستحق خلال 7 أيام — ${generatedAt}`,
       html,

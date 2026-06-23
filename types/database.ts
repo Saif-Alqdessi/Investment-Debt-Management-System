@@ -57,6 +57,7 @@ export interface Database {
           description: string | null
           color: string
           created_at: string
+          user_id: string | null
         }
         Insert: {
           id?: string
@@ -64,6 +65,7 @@ export interface Database {
           description?: string | null
           color?: string
           created_at?: string
+          user_id?: string | null
         }
         Update: {
           id?: string
@@ -71,6 +73,7 @@ export interface Database {
           description?: string | null
           color?: string
           created_at?: string
+          user_id?: string | null
         }
       }
       investments: {

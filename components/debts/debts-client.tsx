@@ -11,6 +11,7 @@ import { useLanguage } from '@/lib/i18n/context'
 import { useSearch } from '@/lib/context/search-context'
 import { deleteDebt, recordPayment } from '@/app/dashboard/debts/actions'
 import { exportDebtsToExcel } from '@/lib/export'
+import { useRole } from '@/lib/context/role-context'
 
 interface DebtPayment {
   id: string
@@ -50,6 +51,7 @@ export function DebtsClient({ debts, currency = 'SAR' }: DebtsClientProps) {
   const [isPending, startTransition] = useTransition()
   const { t } = useLanguage()
   const router = useRouter()
+  const { isViewer } = useRole()
 
   const filteredDebts = debts.filter(debt => {
     const q = searchQuery.toLowerCase()
@@ -187,7 +189,7 @@ export function DebtsClient({ debts, currency = 'SAR' }: DebtsClientProps) {
                   onClick={() => setStatusFilter(filter)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     statusFilter === filter
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-white text-brand-600 shadow-sm'
                       : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
@@ -209,8 +211,8 @@ export function DebtsClient({ debts, currency = 'SAR' }: DebtsClientProps) {
               notes: p.notes ?? undefined,
             })),
           }))}
-          onRecordPayment={isPending ? undefined : handleRecordPayment}
-          onDelete={isPending ? undefined : handleDelete}
+          onRecordPayment={isPending || isViewer ? undefined : handleRecordPayment}
+          onDelete={isPending || isViewer ? undefined : handleDelete}
           currency={currency}
         />
       </div>

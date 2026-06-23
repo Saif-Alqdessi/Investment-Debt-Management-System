@@ -162,7 +162,7 @@ export function InvestmentTable({ investments, onDelete, loading, currency = 'SA
                       <span>{investment.investor_name}</span>
                       {investment.is_shared && (
                         <span title={t('investments.shared_investment')}>
-                          <Users className="h-4 w-4 text-blue-500" />
+                          <Users className="h-4 w-4 text-brand-500" />
                         </span>
                       )}
                     </div>
@@ -207,7 +207,7 @@ export function InvestmentTable({ investments, onDelete, loading, currency = 'SA
                   <TableCell className="text-right ltr:text-right rtl:text-left font-mono text-amber-600">
                     {formatCurrency(investment.commission_amount, currency)}
                   </TableCell>
-                  <TableCell className="text-right ltr:text-right rtl:text-left font-mono font-semibold text-blue-700">
+                  <TableCell className="text-right ltr:text-right rtl:text-left font-mono font-semibold text-brand-700">
                     {formatCurrency(investment.profit_amount + investment.commission_amount, currency)}
                   </TableCell>
                   <TableCell>
@@ -367,7 +367,7 @@ export function InvestmentTable({ investments, onDelete, loading, currency = 'SA
 
       {loading && (
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
           <span className="ms-3 text-gray-500">جاري تحميل البيانات…</span>
         </div>
       )}
@@ -381,7 +381,7 @@ export function InvestmentTable({ investments, onDelete, loading, currency = 'SA
           <p className="text-lg font-medium text-gray-700">لا توجد استثمارات حالياً</p>
           <p className="text-sm text-gray-500 mt-1">ابدأ بإضافة أول استثمار لعميلك</p>
           <Link href="/dashboard/investments/new">
-            <Button className="mt-4 bg-blue-600 hover:bg-blue-700">
+            <Button className="mt-4 bg-brand-600 hover:bg-brand-700">
               إضافة استثمار
             </Button>
           </Link>

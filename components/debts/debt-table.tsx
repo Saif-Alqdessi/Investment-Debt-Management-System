@@ -51,7 +51,7 @@ interface DebtTableProps {
 
 const statusStyles: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
-  partial: 'bg-blue-100 text-blue-800',
+  partial: 'bg-brand-100 text-brand-800',
   paid: 'bg-green-100 text-green-800',
   defaulted: 'bg-red-100 text-red-800',
 }
@@ -110,7 +110,7 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading, c
             <TableRow>
               <TableCell colSpan={13} className="h-32">
                 <div className="flex items-center justify-center gap-3 text-gray-500">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                  <Loader2 className="h-6 w-6 animate-spin text-brand-500" />
                   <span>جاري تحميل البيانات…</span>
                 </div>
               </TableCell>
@@ -199,7 +199,7 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading, c
                               progress >= 100
                                 ? 'bg-green-500'
                                 : progress > 50
-                                ? 'bg-blue-500'
+                                ? 'bg-brand-500'
                                 : progress > 0
                                 ? 'bg-amber-500'
                                 : 'bg-gray-300'
@@ -228,7 +228,7 @@ export function DebtTable({ debts, onRecordPayment, onEdit, onDelete, loading, c
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700"
+                          className="h-8 w-8 p-0 text-brand-600 hover:text-brand-700"
                           onClick={() => onEdit?.(debt)}
                           title={t('debts.edit')}
                         >

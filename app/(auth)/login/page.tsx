@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Lock, Mail, Shield } from 'lucide-react'
+import { BRANDING } from '@/lib/config/branding'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -38,7 +40,7 @@ export default function LoginPage() {
       {/* ── Left panel: branding visual ─────────────────────────────── */}
       <div className="hidden md:flex md:w-1/2 lg:w-3/5 bg-slate-900 relative overflow-hidden items-center justify-center p-12">
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/80 to-blue-950/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/80 to-brand-950/60" />
         {/* Decorative grid */}
         <div
           className="absolute inset-0 opacity-5"
@@ -51,12 +53,12 @@ export default function LoginPage() {
 
         <div className="relative z-10 max-w-lg text-white space-y-8">
           <div className="space-y-4">
-            <span className="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold tracking-widest uppercase rounded-full shadow-lg shadow-blue-600/30">
-              Private Wealth Management
+            <span className="inline-block px-3 py-1 bg-brand-600 text-white text-xs font-bold tracking-widest uppercase rounded-full shadow-lg shadow-brand-600/30">
+              {BRANDING.tagline}
             </span>
             <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight font-sans">
-              Rareb <br />
-              <span className="text-blue-400">Digital Ledger</span>
+              {BRANDING.appName} <br />
+              <span className="text-brand-400">Digital Ledger</span>
             </h1>
             <p className="text-slate-300 text-lg font-light leading-relaxed">
               Architecting your financial future with mathematical precision and editorial clarity.
@@ -79,7 +81,13 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col bg-slate-50 relative">
         {/* Floating header */}
         <header className="flex justify-between items-center px-6 py-4 h-16">
-          <div className="text-2xl font-bold tracking-tight text-slate-900">Rareb</div>
+          <div className="text-2xl font-bold tracking-tight text-slate-900">{BRANDING.appName}</div>
+          <Link
+            href="/signup"
+            className="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline transition-colors"
+          >
+            إنشاء حساب
+          </Link>
         </header>
 
         {/* Form area */}
@@ -101,9 +109,9 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="peer w-full bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 h-14 ps-12 pe-4 rounded-xl transition-all outline-none text-slate-900 placeholder:text-slate-400 text-sm"
+                    className="peer w-full bg-white border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 h-14 ps-12 pe-4 rounded-xl transition-all outline-none text-slate-900 placeholder:text-slate-400 text-sm"
                   />
-                  <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                  <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
                     <Mail className="h-5 w-5" />
                   </div>
                 </div>
@@ -117,9 +125,9 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="peer w-full bg-white border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 h-14 ps-12 pe-12 rounded-xl transition-all outline-none text-slate-900 placeholder:text-slate-400 text-sm"
+                    className="peer w-full bg-white border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 h-14 ps-12 pe-12 rounded-xl transition-all outline-none text-slate-900 placeholder:text-slate-400 text-sm"
                   />
-                  <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                  <div className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors">
                     <Lock className="h-5 w-5" />
                   </div>
                   <button
@@ -135,10 +143,10 @@ export default function LoginPage() {
               {/* Forgot password */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-600 select-none">
-                  <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20" />
+                  <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500/20" />
                   تذكرني
                 </label>
-                <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+                <a href="#" className="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline transition-colors">
                   نسيت كلمة المرور؟
                 </a>
               </div>
@@ -154,7 +162,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-blue-600 text-white rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full h-14 bg-brand-600 text-white rounded-xl font-bold text-base shadow-lg shadow-brand-600/20 hover:bg-brand-700 hover:shadow-brand-600/40 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -167,7 +175,7 @@ export default function LoginPage() {
             {/* Security badge */}
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-2 text-slate-500 bg-white px-4 py-2 rounded-full border border-slate-200 text-xs font-medium">
-                <Shield className="h-4 w-4 text-blue-600" />
+                <Shield className="h-4 w-4 text-brand-600" />
                 تشفير آمن بمستوى مصرفي 256-بت
               </div>
             </div>
@@ -177,15 +185,15 @@ export default function LoginPage() {
         {/* Footer */}
         <footer className="flex flex-col sm:flex-row justify-between items-center px-8 py-6 gap-4 text-[11px] text-slate-400">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-700">Rareb</span>
-            <span className="uppercase tracking-widest">Private Wealth</span>
+            <span className="font-bold text-slate-700">{BRANDING.appName}</span>
+            <span className="uppercase tracking-widest">{BRANDING.tagline}</span>
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-blue-600 transition-colors">Security</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-brand-600 transition-colors">Security</a>
+            <a href="#" className="hover:text-brand-600 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-brand-600 transition-colors">Terms of Service</a>
           </div>
-          <span>© 2024 Rareb Private Wealth. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {BRANDING.copyrightName}. All rights reserved.</span>
         </footer>
       </div>
     </div>

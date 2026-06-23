@@ -71,7 +71,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (request.nextUrl.pathname === '/login' && user) {
+  const authPages = ['/login', '/signup']
+  if (authPages.includes(request.nextUrl.pathname) && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

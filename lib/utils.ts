@@ -38,7 +38,7 @@ export function getStatusColor(status: string): string {
     case 'active':
       return 'bg-emerald-100 text-emerald-800'
     case 'matured':
-      return 'bg-blue-100 text-blue-800'
+      return 'bg-brand-100 text-brand-800'
     case 'renewed':
       return 'bg-purple-100 text-purple-800'
     case 'withdrawn':

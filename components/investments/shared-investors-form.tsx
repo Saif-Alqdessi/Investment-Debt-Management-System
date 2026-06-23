@@ -70,7 +70,7 @@ export function SharedInvestorsForm({
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
         <div className="flex items-center gap-2">
-          <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+          <div className="p-2 bg-brand-50 rounded-xl text-brand-600">
             <Users className="h-4 w-4" />
           </div>
           <div>
@@ -81,7 +81,7 @@ export function SharedInvestorsForm({
         <button
           type="button"
           onClick={addInvestor}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 hover:-translate-y-0.5 active:scale-95 transition-all shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 hover:-translate-y-0.5 active:scale-95 transition-all shadow-sm"
         >
           <Plus className="h-4 w-4" />
           {t('forms.add_investor')}
@@ -125,13 +125,13 @@ export function SharedInvestorsForm({
           <div className="space-y-1.5">
             <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               <span>{t('forms.allocation_progress')}</span>
-              <span className={isOverAllocated ? 'text-red-600' : 'text-blue-600'}>
+              <span className={isOverAllocated ? 'text-red-600' : 'text-brand-600'}>
                 {Math.min(100, (totalAllocated / principalAmount) * 100).toFixed(1)}%
               </span>
             </div>
             <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${isOverAllocated ? 'bg-red-500' : 'bg-blue-500'}`}
+                className={`h-full rounded-full transition-all duration-500 ${isOverAllocated ? 'bg-red-500' : 'bg-brand-500'}`}
                 style={{ width: `${Math.min(100, (totalAllocated / safeTotal) * 100)}%` }}
               />
             </div>
@@ -159,12 +159,12 @@ export function SharedInvestorsForm({
               return (
                 <div
                   key={index}
-                  className="rounded-xl border border-slate-200 overflow-hidden hover:border-blue-300 transition-colors"
+                  className="rounded-xl border border-slate-200 overflow-hidden hover:border-brand-300 transition-colors"
                 >
                   {/* Card header */}
                   <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-100">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+                      <div className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold">
                         {index + 1}
                       </div>
                       <span className="text-sm font-bold text-slate-700">
@@ -234,14 +234,14 @@ export function SharedInvestorsForm({
 
                     {/* Auto-computed read-only preview */}
                     {hasAmount && (
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-blue-50/60 rounded-xl border border-blue-100">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 bg-brand-50/60 rounded-xl border border-brand-100">
                         {/* Ownership % */}
                         <div className="text-center space-y-1">
                           <div className="flex items-center justify-center gap-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
                             <Percent className="h-3 w-3" />
                             {t('forms.ownership_share')}
                           </div>
-                          <div className="font-extrabold tabular-nums text-blue-700 text-sm">
+                          <div className="font-extrabold tabular-nums text-brand-700 text-sm">
                             {ownershipPct.toFixed(2)}%
                           </div>
                         </div>

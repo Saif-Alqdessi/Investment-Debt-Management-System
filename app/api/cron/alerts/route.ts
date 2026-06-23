@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import nodemailer from 'nodemailer'
+import { BRANDING } from '@/lib/config/branding'
 
 // ── Runtime: Node.js (required for Nodemailer TCP sockets) ────────────────────
 export const runtime = 'nodejs'
@@ -91,7 +92,7 @@ function buildEmailHtml(
     )
     .join('')
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://musical-cassata-f4217a.netlify.app'
+  const appUrl = BRANDING.appUrl
 
   return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -109,7 +110,7 @@ function buildEmailHtml(
         <tr>
           <td style="background:linear-gradient(135deg,#1e40af,#3b82f6);padding:32px 40px;">
             <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;">⚠️ تنبيه استحقاق الاستثمارات</h1>
-            <p style="margin:8px 0 0;color:#bfdbfe;font-size:14px;">منصة Rareb للاستثمارات · ${generatedAt}</p>
+            <p style="margin:8px 0 0;color:#bfdbfe;font-size:14px;">منصة ${BRANDING.appName} للاستثمارات · ${generatedAt}</p>
           </td>
         </tr>
 
@@ -145,7 +146,7 @@ function buildEmailHtml(
         <tr>
           <td style="padding:0 40px 32px;text-align:center;">
             <a href="${appUrl}/dashboard/investments"
-               style="display:inline-block;background:#2563eb;color:#ffffff;font-weight:700;font-size:14px;padding:14px 36px;border-radius:12px;text-decoration:none;">
+               style="display:inline-block;background:${BRANDING.primaryColor};color:#ffffff;font-weight:700;font-size:14px;padding:14px 36px;border-radius:12px;text-decoration:none;">
               فتح لوحة التحكم
             </a>
           </td>
@@ -155,7 +156,7 @@ function buildEmailHtml(
         <tr>
           <td style="padding:20px 40px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
             <p style="margin:0;font-size:12px;color:#94a3b8;">
-              هذا البريد تم إرساله تلقائياً من منصة Rareb. يُرجى عدم الرد عليه.
+              هذا البريد تم إرساله تلقائياً من منصة ${BRANDING.appName}. يُرجى عدم الرد عليه.
             </p>
           </td>
         </tr>
@@ -283,7 +284,7 @@ export async function GET(req: NextRequest) {
 
       try {
         await transporter.sendMail({
-          from:    `"Rareb Investments" <${process.env.EMAIL_USER}>`,
+          from:    `"${BRANDING.emailFromName}" <${process.env.EMAIL_USER}>`,
           to:      profile.email,
           subject: `⚠️ تنبيه: ${userInvestments.length} استثمار يستحق خلال 7 أيام — ${generatedAt}`,
           html,

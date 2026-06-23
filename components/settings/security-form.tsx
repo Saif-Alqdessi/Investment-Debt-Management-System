@@ -27,7 +27,7 @@ function Toast({ status }: { status: Status }) {
 
 // ── Input helper ─────────────────────────────────────────────────────────────
 const inputCls =
-  'w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none'
+  'w-full bg-slate-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-500/20 focus:bg-white transition-all outline-none'
 
 // ── Main Component ───────────────────────────────────────────────────────────
 export function SecurityForm() {
@@ -99,7 +99,7 @@ export function SecurityForm() {
   return (
     <section className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
       <h3 className="text-xl font-bold flex items-center gap-2 mb-8 text-slate-900">
-        <Shield className="h-5 w-5 text-blue-600" />
+        <Shield className="h-5 w-5 text-brand-600" />
         الأمان والخصوصية
       </h3>
 
@@ -129,7 +129,7 @@ export function SecurityForm() {
               <button
                 type="submit"
                 disabled={emailLoading || !newEmail.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-sm shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
+                className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 text-white font-bold rounded-xl shadow-sm shadow-brand-600/20 hover:bg-brand-700 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
               >
                 {emailLoading
                   ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري التحديث...</>
@@ -224,7 +224,7 @@ export function SecurityForm() {
               <button
                 type="submit"
                 disabled={pwLoading || !newPw || !confirmPw}
-                className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-sm shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
+                className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 text-white font-bold rounded-xl shadow-sm shadow-brand-600/20 hover:bg-brand-700 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 transition-all text-sm"
               >
                 {pwLoading
                   ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري التحديث...</>

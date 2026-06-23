@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import { translations, type Locale } from './translations'
+import { BRANDING } from '@/lib/config/branding'
 
 interface LanguageContextType {
   locale: Locale
@@ -26,17 +27,21 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('en')
 
+  // Use a namespaced key so multiple white-label deployments on the
+  // same browser domain don't share locale preferences.
+  const localeKey = `${BRANDING.appName}-locale`
+
   useEffect(() => {
-    const saved = localStorage.getItem('rareb-locale') as Locale | null
+    const saved = localStorage.getItem(localeKey) as Locale | null
     if (saved && (saved === 'en' || saved === 'ar')) {
       setLocaleState(saved)
     }
-  }, [])
+  }, [localeKey])
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale)
-    localStorage.setItem('rareb-locale', newLocale)
-  }, [])
+    localStorage.setItem(localeKey, newLocale)
+  }, [localeKey])
 
   const t = useCallback((path: string): string => {
     return getNestedValue(translations[locale], path)

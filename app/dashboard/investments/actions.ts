@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { investmentSchema, type InvestmentFormData } from '@/lib/validations'
 
+import { requireRole } from '@/lib/auth/roles'
+
 export async function createInvestment(formData: InvestmentFormData) {
   const supabase = createClient()
   
@@ -14,6 +16,7 @@ export async function createInvestment(formData: InvestmentFormData) {
   }
 
   try {
+    await requireRole('admin')
     const validated = investmentSchema.parse(formData)
 
     const profitAmount = validated.principal_amount * (validated.profit_rate / 100)
@@ -102,6 +105,7 @@ export async function updateInvestment(id: string, formData: InvestmentFormData)
   }
 
   try {
+    await requireRole('admin')
     const validated = investmentSchema.parse(formData)
 
     const profitAmount = validated.principal_amount * (validated.profit_rate / 100)
@@ -194,7 +198,7 @@ export async function deleteInvestment(id: string) {
   }
 
   try {
-
+    await requireRole('admin')
     const { error } = await supabase
       .from('investments')
       .delete()
@@ -316,6 +320,7 @@ export async function recordTransaction(payload: {
   }
 
   try {
+    await requireRole('admin')
     const { data, error } = await supabase
       .from('investment_transactions')
       .insert({
@@ -485,6 +490,7 @@ export async function dismissInvestmentAlert(id: string) {
   }
 
   try {
+    await requireRole('admin')
     const { error } = await supabase
       .from('investments')
       .update({ alert_dismissed: true })
@@ -514,6 +520,7 @@ export async function toggleProfitDelivered(id: string, currentValue: boolean) {
   }
 
   try {
+    await requireRole('admin')
     const { error } = await supabase
       .from('investments')
       .update({ is_profit_delivered: !currentValue })

@@ -8,10 +8,13 @@ import type { Database } from '@/types/database'
 
 type Investment = Database['public']['Tables']['investments']['Row']
 
+import { getCurrentRole } from '@/lib/auth/roles'
+
 export default async function InvestmentsPage() {
-  const [result, profileResult] = await Promise.all([
+  const [result, profileResult, role] = await Promise.all([
     getInvestments(),
     getProfile(),
+    getCurrentRole(),
   ])
 
   const investments = (result.success && result.data ? result.data : []) as Investment[]
@@ -35,12 +38,14 @@ export default async function InvestmentsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">الاستثمارات</h1>
           <p className="text-slate-500 mt-1">إدارة محفظتك الاستثمارية ومتابعة العوائد</p>
         </div>
-        <Link href="/dashboard/investments/new">
-          <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all text-sm">
-            <span className="text-lg leading-none">+</span>
-            استثمار جديد
-          </button>
-        </Link>
+        {role !== 'viewer' && (
+          <Link href="/dashboard/investments/new">
+            <button className="flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-brand-600/20 hover:bg-brand-700 hover:scale-[1.02] active:scale-95 transition-all text-sm">
+              <span className="text-lg leading-none">+</span>
+              استثمار جديد
+            </button>
+          </Link>
+        )}
       </div>
 
       {/* ── Bento KPI Cards ─────────────────────────────────────── */}
@@ -48,7 +53,7 @@ export default async function InvestmentsPage() {
         {/* Card 1 */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform duration-300">
           <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+            <div className="p-3 bg-brand-50 text-brand-600 rounded-xl">
               <Wallet className="h-5 w-5" />
             </div>
             <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">+12.5%</span>
@@ -78,7 +83,7 @@ export default async function InvestmentsPage() {
         {/* Card 3 */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:-translate-y-1 transition-transform duration-300">
           <div className="flex items-start justify-between mb-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+            <div className="p-3 bg-brand-50 text-brand-600 rounded-xl">
               <BarChart3 className="h-5 w-5" />
             </div>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">

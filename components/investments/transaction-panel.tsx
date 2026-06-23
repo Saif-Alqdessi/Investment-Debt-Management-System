@@ -58,8 +58,8 @@ const actionConfig: Record<ActionType, { label: string; color: string; bgColor: 
   },
   add_capital: {
     label: 'إضافة رأس مال',
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-100 border-blue-200',
+    color: 'text-brand-700',
+    bgColor: 'bg-brand-100 border-brand-200',
     icon: PlusCircle,
   },
   withdraw_partial: {
@@ -159,7 +159,7 @@ export function TransactionPanel({ investmentId, transactions }: TransactionPane
             </CardTitle>
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 print:hidden"
+              className="bg-brand-600 hover:bg-brand-700 print:hidden"
               onClick={() => { resetForm(); setOpen(true) }}
             >
               <Plus className="me-2 h-4 w-4" />
@@ -175,9 +175,9 @@ export function TransactionPanel({ investmentId, transactions }: TransactionPane
                 <p className="text-xs text-emerald-600 mb-1">إجمالي الأرباح المصروفة</p>
                 <p className="font-bold text-emerald-700 font-mono">{formatCurrency(totalPayouts)}</p>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 text-center">
-                <p className="text-xs text-blue-600 mb-1">إجمالي رأس المال المضاف</p>
-                <p className="font-bold text-blue-700 font-mono">{formatCurrency(totalAdded)}</p>
+              <div className="p-3 rounded-lg bg-brand-50 border border-brand-100 text-center">
+                <p className="text-xs text-brand-600 mb-1">إجمالي رأس المال المضاف</p>
+                <p className="font-bold text-brand-700 font-mono">{formatCurrency(totalAdded)}</p>
               </div>
               <div className="p-3 rounded-lg bg-amber-50 border border-amber-100 text-center">
                 <p className="text-xs text-amber-600 mb-1">إجمالي المسحوب</p>
@@ -325,7 +325,7 @@ export function TransactionPanel({ investmentId, transactions }: TransactionPane
             <Button
               onClick={handleSubmit}
               disabled={isPending}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-brand-600 hover:bg-brand-700"
             >
               {isPending ? 'جاري الحفظ…' : 'تسجيل العملية'}
             </Button>

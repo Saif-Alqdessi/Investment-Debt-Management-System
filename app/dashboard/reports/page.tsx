@@ -84,8 +84,8 @@ export default async function ReportsPage() {
   const categoryEntries = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])
 
   // SVG donut segments
-  const donutColors = ['stroke-blue-600', 'stroke-emerald-600', 'stroke-amber-500', 'stroke-purple-500', 'stroke-pink-500']
-  const dotColors   = ['bg-blue-600', 'bg-emerald-600', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500']
+  const donutColors = ['stroke-brand-600', 'stroke-emerald-600', 'stroke-amber-500', 'stroke-purple-500', 'stroke-pink-500']
+  const dotColors   = ['bg-brand-600', 'bg-emerald-600', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500']
   const circumference = 2 * Math.PI * 16
   let donutOffset = 0
   const donutSegments = categoryEntries.map(([key, val], i) => {
@@ -123,7 +123,7 @@ export default async function ReportsPage() {
       {/* ── KPI Row ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* ROI */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border-s-4 border-s-blue-600 border-y border-e border-slate-100">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border-s-4 border-s-brand-600 border-y border-e border-slate-100">
           <p className="text-xs font-semibold text-slate-500 mb-1">إجمالي العائد ROI</p>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold tabular-nums text-slate-900">{totalROI.toFixed(1)}%</span>
@@ -168,7 +168,7 @@ export default async function ReportsPage() {
             <p className="text-sm text-slate-500 mt-0.5">تحليل تراكمي للأصول خلال الـ 12 شهراً الماضية</p>
           </div>
           <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
-            <span className="px-4 py-1.5 text-xs font-bold bg-white text-blue-600 rounded-md shadow-sm">سنوي</span>
+            <span className="px-4 py-1.5 text-xs font-bold bg-white text-brand-600 rounded-md shadow-sm">سنوي</span>
             <span className="px-4 py-1.5 text-xs font-bold text-slate-500">شهري</span>
           </div>
         </div>
@@ -284,7 +284,7 @@ export default async function ReportsPage() {
                       <tr key={inv.id} className="hover:bg-slate-50 transition-colors group">
                         <td className="py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                            <div className="w-9 h-9 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 flex-shrink-0">
                               <TrendingUp className="h-4 w-4" />
                             </div>
                             <div>
@@ -321,7 +321,7 @@ export default async function ReportsPage() {
       </div>
 
       {/* ── Export Footer Banner ─────────────────────────────────── */}
-      <div className="bg-blue-600 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-600/20">
+      <div className="bg-brand-600 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-brand-600/20">
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
             <span className="text-white font-bold text-xl">📄</span>

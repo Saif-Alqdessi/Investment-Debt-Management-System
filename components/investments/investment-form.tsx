@@ -355,9 +355,9 @@ export function InvestmentForm({ initialData, onSubmit, isLoading: externalLoadi
               </div>
 
               {profit_rate && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <div className="text-xs text-blue-600 font-medium">{t('forms.roi_calculation')}</div>
-                  <div className="text-sm text-blue-800">
+                <div className="mt-4 p-3 bg-brand-50 rounded-lg">
+                  <div className="text-xs text-brand-600 font-medium">{t('forms.roi_calculation')}</div>
+                  <div className="text-sm text-brand-800">
                     {profit_rate}% {t('forms.return_on')} {formatCurrency(principal_amount || 0)}
                   </div>
                 </div>

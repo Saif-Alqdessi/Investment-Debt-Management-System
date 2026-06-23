@@ -6,6 +6,7 @@ import { getInvestment, getTransactions } from '../actions'
 import { TransactionPanel } from '@/components/investments/transaction-panel'
 import { PrintButton } from '@/components/print-button'
 import type { Database } from '@/types/database'
+import { BRANDING } from '@/lib/config/branding'
 
 type Investment      = Database['public']['Tables']['investments']['Row']
 type SharedInvestor  = Database['public']['Tables']['shared_investors']['Row']
@@ -52,7 +53,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
           <h2 className="text-2xl font-bold text-slate-900 mb-2">لم يتم العثور على الاستثمار</h2>
           <p className="text-slate-500 mb-6">قد يكون الاستثمار غير موجود أو تم حذفه.</p>
           <Link href="/dashboard/investments">
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+            <button className="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-colors">
               عرض جميع الاستثمارات
             </button>
           </Link>
@@ -109,7 +110,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
       {/* ── Investor hero header (screen only) ──────────────────── */}
       <div className="print:hidden bg-white rounded-2xl p-8 shadow-sm border border-slate-100 flex items-start justify-between">
         <div className="flex items-start gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
             <Users className="h-7 w-7 text-white" />
           </div>
           <div>
@@ -130,7 +131,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
                 {statusLabels[investment.status] ?? investment.status}
               </Badge>
               {investment.is_shared && (
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                <Badge variant="secondary" className="bg-brand-100 text-brand-700">
                   <Users className="me-1 h-3 w-3" />
                   استثمار مشترك
                 </Badge>
@@ -142,7 +143,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
         {/* Days remaining badge */}
         <div className="text-end">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">الأيام المتبقية</p>
-          <p className={`text-4xl font-extrabold tabular-nums ${daysRemaining < 0 ? 'text-red-600' : daysRemaining < 30 ? 'text-amber-600' : 'text-blue-600'}`}>
+          <p className={`text-4xl font-extrabold tabular-nums ${daysRemaining < 0 ? 'text-red-600' : daysRemaining < 30 ? 'text-amber-600' : 'text-brand-600'}`}>
             {daysRemaining > 0 ? daysRemaining : 'متأخر'}
           </p>
           {daysRemaining >= 0 && (
@@ -161,7 +162,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
         {/* Principal */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 print:border print:shadow-none print:rounded-none">
           <div className="flex items-center gap-2 mb-3 print:hidden">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl"><Wallet className="h-4 w-4" /></div>
+            <div className="p-2 bg-brand-50 text-brand-600 rounded-xl"><Wallet className="h-4 w-4" /></div>
           </div>
           <p className="text-xs font-semibold text-slate-500 print:text-gray-500">رأس المال</p>
           <p className="text-2xl font-extrabold tabular-nums text-slate-900 print:text-xl mt-1">{formatCurrency(investment.principal_amount)}</p>
@@ -188,7 +189,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
         </div>
 
         {/* Total payout */}
-        <div className="bg-blue-600 rounded-2xl p-5 shadow-sm print:border print:shadow-none print:rounded-none print:bg-white">
+        <div className="bg-brand-600 rounded-2xl p-5 shadow-sm print:border print:shadow-none print:rounded-none print:bg-white">
           <div className="flex items-center gap-2 mb-3 print:hidden">
             <div className="p-2 bg-white/20 text-white rounded-xl"><DollarSign className="h-4 w-4" /></div>
           </div>
@@ -202,7 +203,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
         {/* Investment Details */}
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 print:border print:shadow-none print:rounded-none">
           <h3 className="font-bold text-slate-900 flex items-center gap-2 mb-6 print:text-base">
-            <Calendar className="h-5 w-5 text-blue-600 print:h-4 print:w-4" />
+            <Calendar className="h-5 w-5 text-brand-600 print:h-4 print:w-4" />
             تفاصيل الاستثمار
           </h3>
           <div className="grid grid-cols-2 gap-6 print:gap-3">
@@ -236,7 +237,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
         {/* Financial Summary */}
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 print:border print:shadow-none print:rounded-none">
           <h3 className="font-bold text-slate-900 flex items-center gap-2 mb-6 print:text-base">
-            <TrendingUp className="h-5 w-5 text-blue-600 print:h-4 print:w-4" />
+            <TrendingUp className="h-5 w-5 text-brand-600 print:h-4 print:w-4" />
             ملخص الحسابات
           </h3>
           <div className="space-y-3">
@@ -256,9 +257,9 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
               <span className="text-sm font-bold text-slate-900">إجمالي الصرف</span>
               <span className="font-mono font-extrabold text-lg tabular-nums print:text-base">{formatCurrency(investment.total_payout)}</span>
             </div>
-            <div className="mt-2 p-3 bg-blue-50 rounded-xl flex items-center justify-between print:bg-gray-50 print:border print:border-gray-300">
-              <span className="text-xs font-semibold text-blue-700 print:text-gray-600">العائد على الاستثمار (ROI)</span>
-              <span className="text-sm font-extrabold text-blue-800 print:text-gray-900 tabular-nums">
+            <div className="mt-2 p-3 bg-brand-50 rounded-xl flex items-center justify-between print:bg-gray-50 print:border print:border-gray-300">
+              <span className="text-xs font-semibold text-brand-700 print:text-gray-600">العائد على الاستثمار (ROI)</span>
+              <span className="text-sm font-extrabold text-brand-800 print:text-gray-900 tabular-nums">
                 {((investment.profit_amount / investment.principal_amount) * 100).toFixed(2)}%
               </span>
             </div>
@@ -278,9 +279,9 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
       {investment.is_shared && investment.shared_investors && investment.shared_investors.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden print:border print:shadow-none print:rounded-none print:break-inside-avoid">
           <div className="p-6 border-b border-slate-100 flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600 print:h-4 print:w-4" />
+            <Users className="h-5 w-5 text-brand-600 print:h-4 print:w-4" />
             <h3 className="font-bold text-slate-900 print:text-base">المستثمرون المشتركون</h3>
-            <Badge variant="secondary" className="bg-blue-100 text-blue-700 print:hidden">
+            <Badge variant="secondary" className="bg-brand-100 text-brand-700 print:hidden">
               {investment.shared_investors.length} مستثمر
             </Badge>
           </div>
@@ -340,7 +341,7 @@ export default async function InvestmentDetailPage({ params }: { params: { id: s
 
       {/* ── Print footer ─────────────────────────────────────────── */}
       <div className="hidden print:block border-t border-gray-300 mt-8 pt-4 text-center text-xs text-gray-400">
-        تم إنشاء هذا الكشف بتاريخ {printDate} — منصة Rareb للاستثمارات
+        تم إنشاء هذا الكشف بتاريخ {printDate} — منصة {BRANDING.appName} للاستثمارات
       </div>
     </div>
   )

@@ -8,10 +8,13 @@ import type { Database } from '@/types/database'
 
 type Debt = Database['public']['Tables']['debts']['Row']
 
+import { getCurrentRole } from '@/lib/auth/roles'
+
 export default async function DebtsPage() {
-  const [result, profileResult] = await Promise.all([
+  const [result, profileResult, role] = await Promise.all([
     getDebts(),
     getProfile(),
+    getCurrentRole(),
   ])
 
   const debts    = (result.success && result.data ? result.data : []) as Debt[]
@@ -35,12 +38,14 @@ export default async function DebtsPage() {
           <p className="text-slate-500 mt-1 italic text-sm">سجل شامل للالتزامات المالية الحالية وجداول السداد.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/dashboard/debts/new">
-            <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all">
-              <Plus className="h-4 w-4" />
-              دين جديد
-            </button>
-          </Link>
+          {role !== 'viewer' && (
+            <Link href="/dashboard/debts/new">
+              <button className="flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:bg-brand-700 hover:scale-[1.02] active:scale-95 transition-all">
+                <Plus className="h-4 w-4" />
+                دين جديد
+              </button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -89,7 +94,7 @@ export default async function DebtsPage() {
         {/* Card 4: Remaining Principal */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+            <div className="p-2 bg-brand-50 rounded-xl text-brand-600">
               <PieChart className="h-5 w-5" />
             </div>
             <span className="text-[10px] font-bold text-slate-400 tracking-tight uppercase">المبلغ المتبقي</span>

@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { debtSchema, paymentSchema, type DebtFormData, type PaymentFormData } from '@/lib/validations'
 
+import { requireRole } from '@/lib/auth/roles'
+
 export async function createDebt(formData: DebtFormData) {
   const supabase = createClient()
 
@@ -14,6 +16,7 @@ export async function createDebt(formData: DebtFormData) {
   }
 
   try {
+    await requireRole('admin')
     const validated = debtSchema.parse(formData)
 
     const debtData = {
@@ -69,6 +72,7 @@ export async function updateDebt(id: string, formData: DebtFormData) {
   }
 
   try {
+    await requireRole('admin')
     const validated = debtSchema.parse(formData)
 
     const debtData = {
@@ -119,6 +123,7 @@ export async function deleteDebt(id: string) {
   }
 
   try {
+    await requireRole('admin')
     const { error } = await supabase
       .from('debts')
       .delete()
@@ -150,6 +155,7 @@ export async function recordPayment(formData: PaymentFormData) {
   }
 
   try {
+    await requireRole('admin')
     const validated = paymentSchema.parse(formData)
 
     // Insert the payment record
