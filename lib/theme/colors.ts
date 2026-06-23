@@ -13,7 +13,8 @@ export function hexToHSL(hex: string) {
   g /= 255;
   b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
 
   if (max !== min) {
     const d = max - min;
@@ -30,7 +31,7 @@ export function hexToHSL(hex: string) {
 
 export function generateBrandPalette(hex: string) {
   const { h, s, l: baseL } = hexToHSL(hex);
-  
+
   // Create a spread of lightness values mimicking a typical tailwind curve
   // We'll anchor the base color to 600, which is commonly used for primary buttons.
   const palette: Record<string, string> = {
